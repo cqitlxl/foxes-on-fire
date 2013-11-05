@@ -45,6 +45,13 @@ class JavaPanZoomController
     private static String MESSAGE_ZOOM_RECT = "Browser:ZoomToRect";
     private static String MESSAGE_ZOOM_PAGE = "Browser:ZoomToPageWidth";
     private static String MESSAGE_TOUCH_LISTENER = "Tab:HasTouchListener";
+    // Henrik and Jans static variables
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    
+
+
 
     // Animation stops if the velocity is below this value when overscrolled or panning.
     private static final float STOPPED_THRESHOLD = 4.0f;
@@ -80,6 +87,7 @@ class JavaPanZoomController
     private enum PanZoomState {
         NOTHING,                /* no touch-start events received */
         FLING,                  /* all touches removed, but we're still scrolling page */
+        ONSCROLL,               /* Crazy testing Henrik */
         TOUCHING,               /* one touch-start event received */
         PANNING_LOCKED_X,       /* touch-start followed by move (i.e. panning with axis lock) X axis */
         PANNING_LOCKED_Y,       /* as above for Y axis */
@@ -97,6 +105,7 @@ class JavaPanZoomController
         AUTONAV,                /* We are scrolling using an AutonavRunnable animation. This is similar
                                    to the FLING state except that it must be stopped manually by the code that
                                    started it, and it's velocity can be updated while it's running. */
+
     }
 
     private enum AxisLockMode {
@@ -111,6 +120,12 @@ class JavaPanZoomController
     private final Axis mY;
     private final TouchEventHandler mTouchEventHandler;
     private final EventDispatcher mEventDispatcher;
+    // Jan and Henriks crazy variables
+    //private scrollNumFingers = new ArrayList<Int>();
+    private int numberOfmesures = 0;
+    private int fingerSum = 0;
+    private boolean twoFingers = false;
+    private boolean threeFingers  = false;
 
     /* The task that handles flings, autonav or bounces. */
     private PanZoomRenderTask mAnimationRenderTask;
@@ -514,6 +529,33 @@ class JavaPanZoomController
 
         switch (mState) {
         case FLING:
+
+        case ONSCROLL:
+            if (threeFingers){
+                Log.w("myApp", "\n three fingers\n");
+            }
+            else if (twoFingers){
+                Log.w("myApp", "\n two finger " + Tabs.getInstance().toString() + "\n");
+                Tabs.getInstance().getSelectedTab().doBack();
+
+            }
+            else {
+                Log.w("myApp", "\n One finger \n");
+            }
+            twoFingers = false;
+            threeFingers = false;
+                /*
+                final Tab tab = Tabs.getInstance().getTab(tabId);
+                tab.setHasTouchListeners(true);
+                mTarget.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Tabs.getInstance().isSelectedTab(tab))
+                            mTouchEventHandler.setWaitForTouchListeners(true);
+                    }
+                    */
+
+
         case AUTONAV:
         case BOUNCE:
         case WAITING_LISTENERS:
@@ -1388,6 +1430,51 @@ class JavaPanZoomController
         return true;
     }
 
+
+
+        @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+        float distanceY) {
+        
+   
+        setState(PanZoomState.ONSCROLL);
+        if (e1.getPointerCount() == 2 || e2.getPointerCount() == 2){
+            twoFingers = true;
+            //threeFingers = false;
+        }
+        else if (e1.getPointerCount() == 3 || e2.getPointerCount() == 3){
+            //twoFingers = false;
+            threeFingers = true;
+        }
+        
+    /*
+       if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
+        if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH
+          || Math.abs(distanceY) < SWIPE_THRESHOLD_VELOCITY) {
+         return false;
+    }
+    if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE) {
+         //printf_stderr("\n Bottom to top \n");
+    } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE) {
+        //printf_stderr("\n Top to bottom \n");
+    }
+    } else {
+        if (Math.abs(distanceX) < SWIPE_THRESHOLD_VELOCITY) {
+         return false;
+     }
+     if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) {
+        //printf_stderr("\n Right to left \n");
+         Log.w("myApp", "\n Right to left in panzoom\n");
+     } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) {
+        //printf_stderr("\n Left to right \n");
+        Log.w("myApp", "\n Left to right In panzoom \n");
+     }
+    }
+    */
+    return super.onScroll(e1, e2, distanceX, distanceY);
+
+    }
+
     private void cancelTouch() {
         GeckoEvent e = GeckoEvent.createBroadcastEvent("Gesture:CancelTouch", "");
         GeckoAppShell.sendEventToGecko(e);
@@ -1466,4 +1553,10 @@ class JavaPanZoomController
     public void setOverscrollHandler(final Overscroll handler) {
         mOverscroll = handler;
     }
+
+
+
+
+
+
 }
