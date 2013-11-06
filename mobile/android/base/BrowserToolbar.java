@@ -133,6 +133,9 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public ImageButton mStop;
     public ImageButton mSiteSecurity;
     public ImageButton mGo;
+    //Armann
+    public ImageButton mReload;
+    //
     public PageActionLayout mPageActionLayout;
     private Animation mProgressSpinner;
     private TabCounter mTabsCounter;
@@ -552,6 +555,11 @@ public class BrowserToolbar extends GeckoRelativeLayout
                 }
             }
         });
+
+        //Armann
+        mReload = (ImageButton) findViewById(R.id.test);
+        mReload.setImageResource(R.drawable.ic_menu_reload);
+        //
 
         float slideWidth = getResources().getDimension(R.dimen.browser_toolbar_lock_width);
 
