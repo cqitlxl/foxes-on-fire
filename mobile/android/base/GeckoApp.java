@@ -16,6 +16,7 @@ import org.mozilla.gecko.prompts.PromptService;
 import org.mozilla.gecko.menu.GeckoMenu;
 import org.mozilla.gecko.menu.GeckoMenuInflater;
 import org.mozilla.gecko.menu.MenuPanel;
+import org.mozilla.gecko.menu.MenuReadingList;
 import org.mozilla.gecko.health.BrowserHealthRecorder;
 import org.mozilla.gecko.health.BrowserHealthRecorder.SessionInformation;
 import org.mozilla.gecko.updater.UpdateService;
@@ -324,6 +325,7 @@ abstract public class GeckoApp
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gecko_app_menu, mMenu);
+
         return true;
     }
 
@@ -1142,6 +1144,9 @@ abstract public class GeckoApp
         if ("default".equals(AppConstants.MOZ_UPDATE_CHANNEL)) {
             enableStrictMode();
         }
+
+        Log.i("MyActivity", "Call on Reader List");
+        MenuReadingList fragment = (MenuReadingList) getSupportFragmentManager().findFragmentById(R.id.menu_reading_list);
 
         // The clock starts...now. Better hurry!
         mJavaUiStartupTimer = new Telemetry.Timer("FENNEC_STARTUP_TIME_JAVAUI");
