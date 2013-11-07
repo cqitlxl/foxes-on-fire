@@ -18,7 +18,7 @@ import org.mozilla.gecko.util.GeckoEventListener;
 import org.mozilla.gecko.util.ThreadUtils;
 
 import org.json.JSONObject;
-
+import java.lang.Math;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
@@ -143,8 +143,19 @@ class JavaPanZoomController
     private boolean mMediumPress;
     /* Used to change the scrollY direction */
     private boolean mNegateWheelScrollY;
-    /* Store the start event for the flinging */
-    private MotionEvent mStartEvent = null;
+    /* Swipe information  start event*/
+    private boolean newTwoFingerEvent = true;
+    private float startPointerOneX;
+    private float startPointerOneY;
+    private float startPointerTwoX;
+    private float startPointerTwoY;
+    /* Swipe information end event */
+    private float endPointerOneX;
+    private float endPointerOneY;
+    private float endPointerTwoX;
+    private float endPointerTwoY;
+
+
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -352,10 +363,21 @@ class JavaPanZoomController
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
+        //Log.w("myApp", "Event finger down :" + event.getPointerCount() + "\n");
+
         if (event.getPointerCount() == 2){
             twoFingers = true;
-            if (mStartEvent == null){
-                mStartEvent = event;    // save this event (where 2 finger movement started) for the fling check
+            endPointerOneX = event.getX(0);
+            endPointerOneY = event.getY(0);
+            endPointerTwoX = event.getX(1);
+            endPointerTwoY = event.getY(1);
+
+            if (newTwoFingerEvent){
+                startPointerOneX = event.getX(0);
+                startPointerOneY = event.getY(0);
+                startPointerTwoX = event.getX(1);
+                startPointerTwoY = event.getY(1);
+                newTwoFingerEvent = false;
             }
         }
         else if (event.getPointerCount() == 3){
@@ -554,7 +576,7 @@ class JavaPanZoomController
             Log.w("myApp", "*** two finger \n");
             
             if (checkForFling(event)){
-                Tabs.getInstance().getSelectedTab().doBack();    
+                    
             }
         }
         else {
@@ -1592,27 +1614,55 @@ class JavaPanZoomController
 
     // checks if a two finger swipe movement can be recognized as a fling instead of a pan movement...
     private boolean checkForFling (MotionEvent endEvent) {
-        MotionEvent testStartEvent, testEndEvent;
-        testStartEvent = mStartEvent;
-        testEndEvent   = endEvent;
-        //int startPointer, endPointer;
-        //startPointer   = testStartEvent.getPointerId(0);
-        //startPointer2  = testStart.getPointerId(1);
-        //endPointer     = testEndEvent.getPointerId(0);
-        //endPointer2   = testEnd.getPointerId(1);
 
-        Log.w("myApp", "flingTEST: start event :" + testStartEvent.getPointerCount() + "\n");
-        //Log.w("myApp", "flingTEST: end event :" + endPointer + "\n");
 
-        //Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "P2: " + testStartEvent.getX(1) + "--" + testStartEvent.getY(1) + "\n");
-        Log.w("myApp", "flingTEST: end: P1:" + testEndEvent.getX(0) + "--" + testEndEvent.getY(0) + "\n");
+
+
+        /*
+        * Condition for a movment to be recognised as a two finger swipe
+        * Distance between p1 and p2 should remain KINDA the same at start and end possition
+        * The movment in X direction has to be larger than a ½ screen width
+        * The movment in Y direction should be less then LIMIT. 
+        * The swipe has to go from left to right
+        */
+        float startDistance = calculateDistance(startPointerOneX,startPointerOneY,startPointerTwoX,startPointerTwoY);
+        float endDistance = calculateDistance(endPointerOneX,endPointerOneY,endPointerTwoX,endPointerTwoY);
+        
+      
+        if (Math.abs(startDistance - endDistance) < 100 &&
+            (endPointerOneX - startPointerOneX) > 300 &&
+                Math.abs(endPointerOneY - startPointerOneY) < 150){
+            Log.w("myApp", " GO BACK\n");
+
+            Tabs.getInstance().getSelectedTab().doBack();
+        }
+
+         else if (Math.abs(startDistance - endDistance) < 100 &&
+            (endPointerOneX - startPointerOneX) < -300 &&
+                Math.abs(endPointerOneY - startPointerOneY) < 150){
+            Log.w("myApp", " GO Not BACK\n");
+
+            Tabs.getInstance().getSelectedTab().doForward();
+        }
+   
+
+
+
+
+
         
 
-        mStartEvent = null;
+        newTwoFingerEvent = true;
         return false;
     }
 
 
+    private float calculateDistance(float pOneX,float pOneY,float pTwoX,float pTwoY){
+
+       
+
+        return FloatMath.sqrt((pOneX - pTwoX)*(pOneX - pTwoX)+(pOneY - pTwoY)*(pOneY - pTwoY)); 
+    }
 
 
 }
