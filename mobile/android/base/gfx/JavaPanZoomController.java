@@ -144,7 +144,7 @@ class JavaPanZoomController
     /* Used to change the scrollY direction */
     private boolean mNegateWheelScrollY;
     /* Store the start event for the flinging */
-    private MotionEvent mStartEvent;
+    private MotionEvent mStartEvent = null;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -354,7 +354,9 @@ class JavaPanZoomController
         //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
         if (event.getPointerCount() == 2){
             twoFingers = true;
-            mStartEvent = event;    // save this event (where 2 finger movement started) for the fling check
+            if (mStartEvent == null){
+                mStartEvent = event;    // save this event (where 2 finger movement started) for the fling check
+            }
         }
         else if (event.getPointerCount() == 3){
             threeFingers = true;
@@ -455,7 +457,7 @@ class JavaPanZoomController
         // user is taking control of movement, so stop
         // any auto-movement we have going
         stopAnimationTask();
-
+        
         switch (mState) {
         case ANIMATED_ZOOM:
             // We just interrupted a double-tap animation, so force a redraw in
@@ -1593,18 +1595,20 @@ class JavaPanZoomController
         MotionEvent testStartEvent, testEndEvent;
         testStartEvent = mStartEvent;
         testEndEvent   = endEvent;
-        int startPointer, endPointer;
-        startPointer   = testStartEvent.getPointerId(0);
-        //startPointer2 = testStart.getPointerId(1);
-        endPointer     = testEndEvent.getPointerId(0);
+        //int startPointer, endPointer;
+        //startPointer   = testStartEvent.getPointerId(0);
+        //startPointer2  = testStart.getPointerId(1);
+        //endPointer     = testEndEvent.getPointerId(0);
         //endPointer2   = testEnd.getPointerId(1);
 
         //Log.w("myApp", "flingTEST: start event :" + startPointer + "\n");
         //Log.w("myApp", "flingTEST: end event :" + endPointer + "\n");
 
-        Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "\n");
+        Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "P2: " + testStartEvent.getX(1) + "--" + testStartEvent.getY(1) + "\n");
         Log.w("myApp", "flingTEST: end: P1:" + testEndEvent.getX(0) + "--" + testEndEvent.getY(0) + "\n");
         
+
+        mStartEvent = null;
         return false;
     }
 
