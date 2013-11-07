@@ -1601,10 +1601,10 @@ class JavaPanZoomController
         //endPointer     = testEndEvent.getPointerId(0);
         //endPointer2   = testEnd.getPointerId(1);
 
-        //Log.w("myApp", "flingTEST: start event :" + startPointer + "\n");
+        Log.w("myApp", "flingTEST: start event :" + testStartEvent.getPointerCount() + "\n");
         //Log.w("myApp", "flingTEST: end event :" + endPointer + "\n");
 
-        Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "P2: " + testStartEvent.getX(1) + "--" + testStartEvent.getY(1) + "\n");
+        //Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "P2: " + testStartEvent.getX(1) + "--" + testStartEvent.getY(1) + "\n");
         Log.w("myApp", "flingTEST: end: P1:" + testEndEvent.getX(0) + "--" + testEndEvent.getY(0) + "\n");
         
 
