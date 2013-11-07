@@ -143,6 +143,8 @@ class JavaPanZoomController
     private boolean mMediumPress;
     /* Used to change the scrollY direction */
     private boolean mNegateWheelScrollY;
+    /* Store the start event for the flinging */
+    private MotionEvent mStartEvent;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -329,6 +331,8 @@ class JavaPanZoomController
             return false;
         }
 
+        Log.w("myApp", "onMOTIONEvent: fingers: " + event.getPointerCount() + "\n");
+
         switch (event.getSource() & InputDevice.SOURCE_CLASS_MASK) {
         case InputDevice.SOURCE_CLASS_POINTER:
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -347,6 +351,15 @@ class JavaPanZoomController
     /** This function MUST be called on the UI thread */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
+        if (event.getPointerCount() == 2){
+            twoFingers = true;
+            mStartEvent = event;    // save this event (where 2 finger movement started) for the fling check
+        }
+        else if (event.getPointerCount() == 3){
+            threeFingers = true;
+            twoFingers = false;
+        }
         return mTouchEventHandler.handleEvent(event);
     }
 
@@ -473,12 +486,6 @@ class JavaPanZoomController
     }
 
     private boolean handleTouchMove(MotionEvent event) {
-        if (event.getPointerCount() == 2){
-            twoFingers = true;
-        }
-        else if (event.getPointerCount() == 3){
-            threeFingers = true;
-        }
 
         switch (mState) {
         case FLING:
@@ -495,6 +502,7 @@ class JavaPanZoomController
             return false;
 
         case TOUCHING:
+            //Log.w("myApp", "touching MOVE\n");
             // Don't allow panning if there is an element in full-screen mode. See bug 775511.
             if (mTarget.isFullScreen() || panDistance(event) < PAN_THRESHOLD) {
                 return false;
@@ -520,6 +528,7 @@ class JavaPanZoomController
             setState(PanZoomState.PANNING);
             // fall through
         case PANNING:
+            //Log.w("myApp", "panning MOVE\n");
             track(event);
             return true;
 
@@ -532,31 +541,34 @@ class JavaPanZoomController
     }
 
     private boolean handleTouchEnd(MotionEvent event) {
-        if (event.getPointerCount() == 2){
-            twoFingers = true;
+        //Log.w("myApp", " END (" + mState + ") X:" + event.getX(0) + " Y: " + event.getY(0) + "\n");
+
+        if (threeFingers){
+            // don't do anything!
+            Log.w("myApp", "*** three fingers\n");
         }
-        else if (event.getPointerCount() == 3){
-            threeFingers = true;
+        else if (twoFingers){
+            // put super function here!
+            Log.w("myApp", "*** two finger \n");
+            
+            if (checkForFling(event)){
+                Tabs.getInstance().getSelectedTab().doBack();    
+            }
         }
+        else {
+            // Sofia's and Jessica's function
+            // (check if in reader mode + check if coordinates of start event are at the edge of the screen)
+            Log.w("myApp", "*** One finger \n");
+        }
+        twoFingers = false;
+        threeFingers = false;
 
 
         switch (mState) {
         case FLING:
 
         case ONSCROLL:
-            if (threeFingers){
-                Log.w("myApp", "\n three fingers\n");
-            }
-            else if (twoFingers){
-                Log.w("myApp", "\n two finger " + Tabs.getInstance().toString() + "\n");
-                Tabs.getInstance().getSelectedTab().doBack();
-
-            }
-            else {
-                Log.w("myApp", "\n One finger \n");
-            }
-            twoFingers = false;
-            threeFingers = false;
+            
                 /*
                 final Tab tab = Tabs.getInstance().getTab(tabId);
                 tab.setHasTouchListeners(true);
@@ -570,23 +582,18 @@ class JavaPanZoomController
 
 
         case AUTONAV:
-              Log.w("myApp", "\n Autonav End\n");
         case BOUNCE:
-                Log.w("myApp", "\n Bounce End\n");
         case WAITING_LISTENERS:
             // should never happen
             Log.e(LOGTAG, "Received impossible touch end while in " + mState);
             // fall through
         case ANIMATED_ZOOM:
-            Log.w("myApp", "\n animated end\n");
         case NOTHING:
-              Log.w("myApp", "\n Nothing end\n");
             // may happen if user double-taps and drags without lifting after the
             // second tap. ignore if this happens.
             return false;
 
         case TOUCHING:
-              Log.w("myApp", "touching End\n");
             // the switch into TOUCHING might have happened while the page was
             // snapping back after overscroll. we need to finish the snap if that
             // was the case
@@ -594,44 +601,22 @@ class JavaPanZoomController
             return false;
 
         case PANNING:
-                Log.w("myApp", "\n No Panic (Panning)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
-        case PANNING_LOCKED_X:
-                Log.w("myApp", "\n No Panic (PANNING_LOCKED_X)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
+        case PANNING_LOCKED_X:;
         case PANNING_LOCKED_Y:
-                Log.w("myApp", "\n No Panic (PANNING_LOCKED_Y)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
         case PANNING_HOLD:
-                Log.w("myApp", "\n No Panic (PANNING_HOLD)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
         case PANNING_HOLD_LOCKED_X:
-                Log.w("myApp", "\n No Panic (PANNING_HOLD_LOCKED_X)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
         case PANNING_HOLD_LOCKED_Y:
-                Log.w("myApp", "\n No Panic (PANNING_HOLD_LOCKED_Y)\n");
-                Log.w("myApp", "axis values: " + event.getAxisValue(0) + " " + event.getAxisValue(1) + "\n");
+
             setState(PanZoomState.FLING);
             fling();
 
             return true;
 
         case PINCHING:
-              Log.w("myApp", "\n pinching end\n");
             setState(PanZoomState.NOTHING);
             return true;
         }
 
-        if (threeFingers){
-            Log.w("myApp", "\n three fingers\n");
-        }
-        else if (twoFingers){
-            Log.w("myApp", "\n two finger " + Tabs.getInstance().toString() + "\n");
-            Tabs.getInstance().getSelectedTab().doBack();
-        }
-        else {
-             Log.w("myApp", "\n dont know how many finger\n");
-        }
         Log.e(LOGTAG, "Unhandled case " + mState + " in handleTouchEnd");
         return false;
     }
@@ -687,7 +672,6 @@ class JavaPanZoomController
         float velocityX = normalizeJoystickScroll(event, MotionEvent.AXIS_X);
         float velocityY = normalizeJoystickScroll(event, MotionEvent.AXIS_Y);
         float zoomDelta = normalizeJoystickZoom(event, MotionEvent.AXIS_RZ);
-        Log.w("myApp", "\n handleJoystickNav \n");
         if (velocityX == 0 && velocityY == 0 && zoomDelta == 0) {
             if (mState == PanZoomState.AUTONAV) {
                 bounce(); // if not needed, this will automatically go to state NOTHING
@@ -714,8 +698,8 @@ class JavaPanZoomController
         mY.startTouch(y);
         setState(PanZoomState.TOUCHING);
         mLastEventTime = time;
-        Log.w("myApp", "\n inStartTouch: distanceX;" + x + " \n");
-        Log.w("myApp", "\n inStartTouch: distanceY;" + y + " \n");
+        //Log.w("myApp", "\n inStartTouch: distanceX;" + x + " \n");
+        //Log.w("myApp", "\n inStartTouch: distanceY;" + y + " \n");
     }
 
     private void startPanning(float x, float y, long time) {
@@ -723,8 +707,8 @@ class JavaPanZoomController
         float dy = mY.panDistance(y);
         double angle = Math.atan2(dy, dx); // range [-pi, pi]
         angle = Math.abs(angle); // range [0, pi]
-        Log.w("myApp", "\n inStartPanning: distanceX;" + x + " \n");
-        Log.w("myApp", "\n inStartPanning: distanceY;" + y + " \n");
+        //Log.w("myApp", "\n inStartPanning: distanceX;" + x + " \n");
+        //Log.w("myApp", "\n inStartPanning: distanceY;" + y + " \n");
 
         // When the touch move breaks through the pan threshold, reposition the touch down origin
         // so the page won't jump when we start panning.
@@ -1604,7 +1588,25 @@ class JavaPanZoomController
         mOverscroll = handler;
     }
 
+    // checks if a two finger swipe movement can be recognized as a fling instead of a pan movement...
+    private boolean checkForFling (MotionEvent endEvent) {
+        MotionEvent testStartEvent, testEndEvent;
+        testStartEvent = mStartEvent;
+        testEndEvent   = endEvent;
+        int startPointer, endPointer;
+        startPointer   = testStartEvent.getPointerId(0);
+        //startPointer2 = testStart.getPointerId(1);
+        endPointer     = testEndEvent.getPointerId(0);
+        //endPointer2   = testEnd.getPointerId(1);
 
+        //Log.w("myApp", "flingTEST: start event :" + startPointer + "\n");
+        //Log.w("myApp", "flingTEST: end event :" + endPointer + "\n");
+
+        Log.w("myApp", "flingTEST: start: P1:" + testStartEvent.getX(0) + "--" + testStartEvent.getY(0) + "\n");
+        Log.w("myApp", "flingTEST: end: P1:" + testEndEvent.getX(0) + "--" + testEndEvent.getY(0) + "\n");
+        
+        return false;
+    }
 
 
 
