@@ -130,7 +130,7 @@ class JavaPanZoomController
     /* Used to change the scrollY direction */
     private boolean mNegateWheelScrollY;
     /* Swipe information  start event*/
-    private boolean newTwoFingerEvent;
+    private boolean newMultiFingerEvent;
     private float startPointerOneX;
     private float startPointerOneY;
     private float startPointerTwoX;
@@ -150,7 +150,7 @@ class JavaPanZoomController
 
     public JavaPanZoomController(PanZoomTarget target, View view, EventDispatcher eventDispatcher) {
         /* Initialazation of booleans*/
-        newTwoFingerEvent = true;
+        newMultiFingerEvent = true;
         twoFingers = false;
         threeFingers  = false;
 
@@ -352,25 +352,26 @@ class JavaPanZoomController
     public boolean onTouchEvent(MotionEvent event) {
         //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
         //Log.w("myApp", "Event finger down :" + event.getPointerCount() + "\n");
+        if ((event.getPointerCount() == 2 || event.getPointerCount() == 3) && newMultiFingerEvent ){
 
-        if (event.getPointerCount() == 2){
+                startPointerOneX = event.getX(0);
+                startPointerOneY = event.getY(0);
+                startPointerTwoX = event.getX(1);
+                startPointerTwoY = event.getY(1);
+                newMultiFingerEvent = false;
+        }
+        
+        if (event.getPointerCount() == 2) {
             twoFingers = true;
             endPointerOneX = event.getX(0);
             endPointerOneY = event.getY(0);
             endPointerTwoX = event.getX(1);
             endPointerTwoY = event.getY(1);
-
-            if (newTwoFingerEvent){
-                startPointerOneX = event.getX(0);
-                startPointerOneY = event.getY(0);
-                startPointerTwoX = event.getX(1);
-                startPointerTwoY = event.getY(1);
-                newTwoFingerEvent = false;
-            }
         }
         else if (event.getPointerCount() == 3){
             threeFingers = true;
             twoFingers = false;
+            //Log.w("myApp", " Henrik has at least three fingers! \n");
         }
         return mTouchEventHandler.handleEvent(event);
     }
@@ -554,11 +555,11 @@ class JavaPanZoomController
 
     private boolean handleTouchEnd(MotionEvent event) {
         if (threeFingers){
-           // Log.w("myApp", "*** three fingers\n");
+            Log.w("myApp", "*** three fingers\n");
             handelThreeFingerFling(event);
         }
         else if (twoFingers){
-           // Log.w("myApp", "*** two finger \n");
+            
             handelTwofFingerFling();
         }
         else {
@@ -1546,16 +1547,18 @@ class JavaPanZoomController
         if (Math.abs(startDistance - endDistance) < 100 &&
             (endPointerOneX - startPointerOneX) > 300 &&
                 Math.abs(endPointerOneY - startPointerOneY) < 150){
+                Log.w("myApp", "*** two finger forward \n");
               Tabs.getInstance().getSelectedTab().doForward();
           return true;
         }
         else if (Math.abs(startDistance - endDistance) < 100 &&
             (endPointerOneX - startPointerOneX) < -300 &&
                 Math.abs(endPointerOneY - startPointerOneY) < 150){
+            Log.w("myApp", "*** two finger backwards \n");
             Tabs.getInstance().getSelectedTab().doBack();
           return true;
         }
-        newTwoFingerEvent = true;
+        newMultiFingerEvent = true;
         return false;
     }
 
@@ -1566,11 +1569,23 @@ class JavaPanZoomController
         return FloatMath.sqrt((pOneX - pTwoX)*(pOneX - pTwoX)+(pOneY - pTwoY)*(pOneY - pTwoY)); 
     }
     private boolean handelThreeFingerFling(MotionEvent endEvent){
-        
+        /* Assume if you swipe three fingers more then distance LIMIT then its a valid threefinger swipe
+        *  Regoneises the direction of the swipe.
+        *
+        */
+
+        if (endEvent.getX(0) - startPointerOneX > 300){
+
+            Log.w("myApp", "***Three fingers right to left \n");
+
+        }
+        else if(endEvent.getX(0) - startPointerOneX  > -300){
+            Log.w("myApp", "***Three fingers left to right\n");
+        }
 
 
 
-        Log.w("myApp", "*** handelThreeFingerFling\n");
+        newMultiFingerEvent = false;
         return false;
     }
 
