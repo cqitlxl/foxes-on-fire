@@ -152,10 +152,6 @@
                      android:contentDescription="@string/site_security"
                      android:visibility="gone"/>
 
-        <ImageButton android:id="@+id/test"
-                     style="@style/UrlBar.ImageButton.Icon"
-                     android:src="@drawable/ic_menu_reload"/>                     
-
         <org.mozilla.gecko.widget.GeckoTextView android:id="@+id/url_bar_title"
                                                 style="@style/UrlBar.Button"
                                                 android:layout_width="fill_parent"
@@ -176,6 +172,12 @@
                                             android:layout_marginRight="12dp"
                                             android:visibility="gone"
                                             android:orientation="horizontal"/>
+
+        <ImageButton android:id="@+id/reload"
+                     style="@style/UrlBar.ImageButton.Icon"
+                     android:src="@drawable/ic_menu_reload"
+                     android:scaleType="fitCenter"
+                     android:adjustViewBounds="true"/>
 
         <ImageButton android:id="@+id/stop"
                      style="@style/UrlBar.ImageButton.Icon"

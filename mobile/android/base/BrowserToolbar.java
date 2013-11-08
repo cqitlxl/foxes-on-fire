@@ -557,9 +557,14 @@ public class BrowserToolbar extends GeckoRelativeLayout
         });
 
         //Armann
-        mReload = (ImageButton) findViewById(R.id.test);
+        mReload = (ImageButton) findViewById(R.id.reload);
         mReload.setImageResource(R.drawable.ic_menu_reload);
-        //
+        mReload.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+            }
+        });
 
         float slideWidth = getResources().getDimension(R.dimen.browser_toolbar_lock_width);
 
@@ -976,6 +981,8 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public void setPageActionVisibility(boolean isLoading) {
         // Handle the loading mode page actions
         mStop.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        //Armann
+        mReload.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 
         // Handle the viewing mode page actions
         setSiteSecurityVisibility(mShowSiteSecurity && !isLoading);
