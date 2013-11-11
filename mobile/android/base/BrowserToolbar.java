@@ -546,6 +546,16 @@ public class BrowserToolbar extends GeckoRelativeLayout
             }
         });
 
+        //Armann
+        mReload = (ImageButton) findViewById(R.id.reload);
+        mReload.setImageResource(R.drawable.ic_menu_reload);
+        mReload.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                refresh();
+            }
+        });
+
         mGo = (ImageButton) findViewById(R.id.go);
         mGo.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -556,15 +566,6 @@ public class BrowserToolbar extends GeckoRelativeLayout
             }
         });
 
-        //Armann
-        mReload = (ImageButton) findViewById(R.id.reload);
-        mReload.setImageResource(R.drawable.ic_menu_reload);
-        mReload.setOnClickListener(new Button.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-            }
-        });
 
         float slideWidth = getResources().getDimension(R.dimen.browser_toolbar_lock_width);
 

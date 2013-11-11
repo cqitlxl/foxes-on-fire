@@ -174,10 +174,8 @@
                                             android:orientation="horizontal"/>
 
         <ImageButton android:id="@+id/reload"
-                     style="@style/UrlBar.ImageButton.Icon"
-                     android:src="@drawable/ic_menu_reload"
-                     android:scaleType="fitCenter"
-                     android:adjustViewBounds="true"/>
+                     style="@style/UrlBar.ImageButton.ReloadIcon"
+                     android:src="@drawable/ic_menu_reload"/>
 
         <ImageButton android:id="@+id/stop"
                      style="@style/UrlBar.ImageButton.Icon"
