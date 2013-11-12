@@ -567,7 +567,6 @@ class JavaPanZoomController
 
     private boolean handleTouchEnd(MotionEvent event) {
         if (threeFingers){
-            Log.w("myApp", "*** three fingers\n");
             handelThreeFingerFling(event);
         }
         else if (twoFingers){
@@ -1583,16 +1582,32 @@ class JavaPanZoomController
     private boolean handelThreeFingerFling(MotionEvent endEvent){
         /* Assume if you swipe three fingers more then distance LIMIT then its a valid threefinger swipe
         *  Regoneises the direction of the swipe.
-        *
+        *   *******TODO**********
+        *   When on first or last tab prevous tab returns wrong tab
         */
 
         if (endEvent.getX(0) - startPointerOneX > 300){
+            if (Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
+            Log.w("myApp", "***Three fingers left to right \n " + Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle());
+            Tabs.getInstance().selectTab(Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
+            }
+            else{
+                Log.w("myApp", "No other pages to swith to-- inGetPriviousTab \n ");     
+            }
 
-            Log.w("myApp", "***Three fingers right to left \n");
 
+
+ 
         }
         else if(endEvent.getX(0) - startPointerOneX  > -300){
-            Log.w("myApp", "***Three fingers left to right\n");
+            if (Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
+                Log.w("myApp", "***Three fingers right to left \n " + Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle()); 
+                 Tabs.getInstance().selectTab(Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
+            }
+            else{
+                Log.w("myApp", "No other pages to swith to-- inGetNext \n ");
+            }
+
         }
 
 
