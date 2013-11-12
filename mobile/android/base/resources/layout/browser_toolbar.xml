@@ -175,7 +175,7 @@
 
         <ImageButton android:id="@+id/reload"
                      style="@style/UrlBar.ImageButton.ReloadIcon"
-                     android:src="@drawable/ic_menu_reload"/>
+                     android:src="@drawable/urlbar_stop"/>
 
         <ImageButton android:id="@+id/stop"
                      style="@style/UrlBar.ImageButton.Icon"

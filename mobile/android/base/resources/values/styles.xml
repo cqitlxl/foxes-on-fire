@@ -390,10 +390,9 @@
     </style>
     <!-- URL bar - Reload Icon -->
     <style name="UrlBar.ImageButton.ReloadIcon">
-         <item name="android:padding">0dp</item>
-         <item name="android:layout_gravity">left</item>
-         <item name="android:layout_width">wrap_content</item>
-         <item name="android:layout_height">wrap_content</item>
+         <item name="android:scaleType">centerCrop</item>
+         <item name="android:layout_width">48dp</item>
+         <item name="android:layout_height">48dp</item>
          <item name="android:layout_weight">0.0</item>
     </style>
     <!-- TabsTray List -->

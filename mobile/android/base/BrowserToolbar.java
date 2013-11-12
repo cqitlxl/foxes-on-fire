@@ -552,7 +552,10 @@ public class BrowserToolbar extends GeckoRelativeLayout
         mReload.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
-                refresh();
+                Tab tab = Tabs.getInstance().getSelectedTab();
+                if (tab != null)
+                    tab.doReload();
+                setProgressVisibility(true);
             }
         });
 
