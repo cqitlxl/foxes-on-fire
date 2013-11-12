@@ -8,8 +8,8 @@
   android:layout_height="match_parent"
   android:background="@color/background_light">
 
-    <TextView android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:text="Herrooooooo!" />
+	<org.mozilla.gecko.home.HomeListView android:id="@+id/list"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"/>
 
 </LinearLayout>
