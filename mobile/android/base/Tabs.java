@@ -745,7 +745,11 @@ public class Tabs implements GeckoEventListener {
     public static int getNextTabId() {
         return sTabId.getAndIncrement();
     }
-
+    
+    /*
+    * Returns the previous tab. If there is no previous tab it returns the last tab
+    * of the list. If no other tabs at all then returns NULL. 
+    */
     public Tab getPreviousSwipeTab(Tab tab) {
     Tab selectedTab = getSelectedTab();
     if (selectedTab != tab)
@@ -777,9 +781,11 @@ public class Tabs implements GeckoEventListener {
     }
 
 
-
-
-       public Tab getNextSwipeTab(Tab tab) {
+    /*
+    * Returns the next tab. If there is no next tab then it returns the first tab of the list.
+    * If there is no other tabs then it returns NULL.
+    */
+    public Tab getNextSwipeTab(Tab tab) {
         Tab selectedTab = getSelectedTab();
         if (selectedTab != tab)
             return selectedTab;

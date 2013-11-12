@@ -1578,15 +1578,14 @@ class JavaPanZoomController
         return FloatMath.sqrt((pOneX - pTwoX)*(pOneX - pTwoX)+(pOneY - pTwoY)*(pOneY - pTwoY)); 
     }
 
-    /*later*/
+    /* This method handels the tab switching functionalities when swiping with three fingers*/
     private boolean handelThreeFingerFling(MotionEvent endEvent){
-        /* Assume if you swipe three fingers more then distance LIMIT then its a valid threefinger swipe
-        *  Regoneises the direction of the swipe.
-        *   *******TODO**********
-        *   When on first or last tab prevous tab returns wrong tab
+        /* Assume if you swipe three fingers more then FLING_DISTANCE * screenWidth, it's a valid threefinger swipe
+        *  Swiping from left to right shall cause the previous tab to open.
+        *  Swiping from right to left shall cause the next tab to open.
         */
 
-        if (endEvent.getX(0) - startPointerOneX > 300){
+        if (endEvent.getX(0) - startPointerOneX > screenWidth * FLING_DISTANCE){
             if (Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
             Log.w("myApp", "***Three fingers left to right \n " + Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle());
             Tabs.getInstance().selectTab(Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
@@ -1599,7 +1598,7 @@ class JavaPanZoomController
 
  
         }
-        else if(endEvent.getX(0) - startPointerOneX  > -300){
+        else if(endEvent.getX(0) - startPointerOneX  > - screenWidth * FLING_DISTANCE){
             if (Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
                 Log.w("myApp", "***Three fingers right to left \n " + Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle()); 
                  Tabs.getInstance().selectTab(Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
