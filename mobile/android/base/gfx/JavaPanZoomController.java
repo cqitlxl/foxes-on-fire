@@ -77,6 +77,15 @@ class JavaPanZoomController
     // The duration of the bounce animation in ns
     private static final int BOUNCE_ANIMATION_DURATION = 250000000;
 
+    // factor for screen witdh to set fling distance 
+    private static double FLING_DISTANCE = 0.33;
+
+    // max deviation between fingers at start and end position in pixels
+    private static int FLING_DEVIATION = 100;
+
+    // max deviation in Y-direction between fling start and end position in pixels
+    private static int MAX_Y_MOVEMENT = 150;
+
     private enum PanZoomState {
         NOTHING,                /* no touch-start events received */
         FLING,                  /* all touches removed, but we're still scrolling page */
@@ -144,6 +153,7 @@ class JavaPanZoomController
     private boolean twoFingers;
     private boolean threeFingers;
     
+    private int screenWidth;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -153,6 +163,8 @@ class JavaPanZoomController
         newMultiFingerEvent = true;
         twoFingers = false;
         threeFingers  = false;
+
+        screenWidth = view.getWidth();
 
         mTarget = target;
         mSubscroller = new SubdocumentScrollHelper(eventDispatcher);
@@ -1538,22 +1550,22 @@ class JavaPanZoomController
         /*
         * Condition for a movment to be recognised as a two finger swipe
         * Distance between p1 and p2 should remain KINDA the same at start and end possition
-        * The movment in X direction has to be larger than a ½ screen width
+        * The movment in X direction has to be larger than a 1/3 of the screen width
         * The movment in Y direction should be less then LIMIT. 
         * The swipe has to go from left to right
         */
         float startDistance = calculateDistance(startPointerOneX,startPointerOneY,startPointerTwoX,startPointerTwoY);
         float endDistance = calculateDistance(endPointerOneX,endPointerOneY,endPointerTwoX,endPointerTwoY);
-        if (Math.abs(startDistance - endDistance) < 100 &&
-            (endPointerOneX - startPointerOneX) > 300 &&
-                Math.abs(endPointerOneY - startPointerOneY) < 150){
+        if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
+            (endPointerOneX - startPointerOneX) > - screenWidth * FLING_DISTANCE &&
+                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
                 Log.w("myApp", "*** two finger forward \n");
               Tabs.getInstance().getSelectedTab().doForward();
           return true;
         }
-        else if (Math.abs(startDistance - endDistance) < 100 &&
-            (endPointerOneX - startPointerOneX) < -300 &&
-                Math.abs(endPointerOneY - startPointerOneY) < 150){
+        else if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
+            (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
+                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
             Log.w("myApp", "*** two finger backwards \n");
             Tabs.getInstance().getSelectedTab().doBack();
           return true;
@@ -1562,12 +1574,12 @@ class JavaPanZoomController
         return false;
     }
 
+    /*calculates the distance between two pointers given as x and y coordinates*/
     private float calculateDistance(float pOneX,float pOneY,float pTwoX,float pTwoY){
-
-       
-
         return FloatMath.sqrt((pOneX - pTwoX)*(pOneX - pTwoX)+(pOneY - pTwoY)*(pOneY - pTwoY)); 
     }
+
+    /*later*/
     private boolean handelThreeFingerFling(MotionEvent endEvent){
         /* Assume if you swipe three fingers more then distance LIMIT then its a valid threefinger swipe
         *  Regoneises the direction of the swipe.
