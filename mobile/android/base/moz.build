@@ -861,6 +861,7 @@ ANDROID_RESFILES += [
     'resources/layout/menu_item_action_view.xml',
     'resources/layout/menu_popup.xml',
     'resources/layout/menu_reading_list.xml',
+    'resources/layout/menu_reading_list_item.xml',
     'resources/layout/notification_icon_text.xml',
     'resources/layout/notification_progress.xml',
     'resources/layout/notification_progress_text.xml',
