@@ -4,6 +4,7 @@ import org.mozilla.gecko.R;
 import org.mozilla.gecko.db.BrowserContract.Bookmarks;
 import org.mozilla.gecko.db.BrowserDB;
 import org.mozilla.gecko.home.SimpleCursorLoader;
+import org.mozilla.gecko.db.BrowserDB.URLColumns;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -92,8 +93,12 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor){
-        	TextView tv = (TextView) view;
-        	tv.setText("Test");
+        	TextView row = (TextView) view;
+            String title = "No title";
+            if(cursor != null){
+                title = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.TITLE));
+            }
+            row.setText(title);
         }
 
         @Override
