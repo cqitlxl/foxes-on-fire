@@ -5,6 +5,8 @@ import org.mozilla.gecko.db.BrowserContract.Bookmarks;
 import org.mozilla.gecko.db.BrowserDB;
 import org.mozilla.gecko.home.SimpleCursorLoader;
 import org.mozilla.gecko.db.BrowserDB.URLColumns;
+import org.mozilla.gecko.Tabs;
+import org.mozilla.gecko.ReaderModeUtils;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.widget.ListView;
+import android.widget.AdapterView;
 import android.database.Cursor;
 import android.content.Context;
 import android.widget.TextView;
@@ -49,6 +52,21 @@ public class MenuReadingList extends Fragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {	    
 		super.onCreate(savedInstanceState);
 	    mList = (ListView) view.findViewById(R.id.list);
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Cursor c = mAdapter.getCursor();
+                if (c == null || !c.moveToPosition(position)) {
+                    return;
+                }
+
+                String url = c.getString(c.getColumnIndexOrThrow(URLColumns.URL));
+                url = ReaderModeUtils.getAboutReaderForUrl(url);
+
+                //Loads url in current tab
+                Tabs.getInstance().loadUrl(url);
+            }
+        });
 	}
 
 	@Override
