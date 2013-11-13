@@ -27,14 +27,15 @@
 
             <include layout="@layout/shared_ui_components"/>
 
-            <fragment android:name="org.mozilla.gecko.menu.MenuReadingList"
-                android:id="@+id/menu_reading_list"
-                android:layout_width="50dp"
-                android:layout_height="match_parent" />
-
             <FrameLayout android:id="@+id/home_pager_container"
                          android:layout_width="fill_parent"
                          android:layout_height="fill_parent">
+
+                <!-- Fragment showing the reading list menu in reader mode -->
+                <fragment android:name="org.mozilla.gecko.menu.MenuReadingList"
+                android:id="@+id/menu_reading_list"
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
 
                 <ViewStub android:id="@+id/home_pager_stub"
                           android:layout="@layout/home_pager"
