@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.database.Cursor;
 import android.content.Context;
 import android.widget.TextView;
-import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 
@@ -29,12 +29,20 @@ public class MenuReadingList extends Fragment {
 
     private CursorLoaderCallbacks mCursorLoaderCallbacks;
 
+    private boolean mIsLoaded;
+
 	@Override
 	public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroupContainer,
 		Bundle savedInstanceState) {
 		View view = layoutInflater.inflate(R.layout.menu_reading_list, viewGroupContainer, false);
 		return view;
 	}
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        mIsLoaded = false;
+    }
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {	    
@@ -45,27 +53,32 @@ public class MenuReadingList extends Fragment {
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-	    
 	    mAdapter = new MenuReadingListAdapter(getActivity(), null);
         mList.setAdapter(mAdapter);
 
         mCursorLoaderCallbacks = new CursorLoaderCallbacks();
 
-        getLoaderManager().initLoader(0, null, this);
+        loadIfVisible();
     }
 
-
+    protected void loadIfVisible() {
+        if(!mIsLoaded){
+            getLoaderManager().initLoader(0, null, mCursorLoaderCallbacks);
+            mIsLoaded = true;
+        }
+    }
     /**
      * Cursor loader for the list of reading list items.
      */
     private static class MenuReadingListLoader extends SimpleCursorLoader {
-        public ReadingListLoader(Context context) {
+        public MenuReadingListLoader(Context context) {
             super(context);
         }
 
         @Override
-        public Cursor MenuloadCursor() {
-            return BrowserDB.getBookmarksInFolder(getContext().getContentResolver(), Bookmarks.FIXED_READING_LIST_ID);
+        public Cursor loadCursor() {
+            Cursor cursor = BrowserDB.getBookmarksInFolder(getContext().getContentResolver(), Bookmarks.FIXED_READING_LIST_ID);
+            return cursor;
         }
     }
 
@@ -79,10 +92,8 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor){
-        	TextView tv = (TextView) view.findViewById(R.layout.menu_reading_list_item);
-        	Log.i("MyActivity", "bindview setting textview");
+        	TextView tv = (TextView) view;
         	tv.setText("Test");
-
         }
 
         @Override
