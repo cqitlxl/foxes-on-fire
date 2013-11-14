@@ -52,6 +52,7 @@
 <!ENTITY forward "Forward">
 <!ENTITY menu "Menu">
 <!ENTITY back "Back">
+<!ENTITY reload "Reload">
 <!ENTITY stop "Stop">
 <!ENTITY site_security "Site Security">
 

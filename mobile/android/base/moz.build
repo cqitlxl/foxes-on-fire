@@ -487,6 +487,7 @@ ANDROID_RESFILES += [
     'resources/drawable-hdpi/url_bar_entry_default_pb.9.png',
     'resources/drawable-hdpi/url_bar_entry_pressed.9.png',
     'resources/drawable-hdpi/url_bar_entry_pressed_pb.9.png',
+    'resources/drawable-hdpi/urlbar_reload.png',
     'resources/drawable-hdpi/urlbar_stop.png',
     'resources/drawable-hdpi/validation_arrow.png',
     'resources/drawable-hdpi/validation_arrow_inverted.png',

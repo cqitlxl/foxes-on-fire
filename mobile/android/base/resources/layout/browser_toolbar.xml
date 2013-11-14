@@ -174,8 +174,9 @@
                                             android:orientation="horizontal"/>
 
         <ImageButton android:id="@+id/reload"
-                     style="@style/UrlBar.ImageButton.ReloadIcon"
-                     android:src="@drawable/urlbar_stop"/>
+                     style="@style/UrlBar.ImageButton.Icon"
+                     android:src="@drawable/urlbar_reload"
+                     android:contentDescription="@string/reload"/>
 
         <ImageButton android:id="@+id/stop"
                      style="@style/UrlBar.ImageButton.Icon"

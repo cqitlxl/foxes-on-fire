@@ -133,9 +133,8 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public ImageButton mStop;
     public ImageButton mSiteSecurity;
     public ImageButton mGo;
-    //Armann
     public ImageButton mReload;
-    //
+
     public PageActionLayout mPageActionLayout;
     private Animation mProgressSpinner;
     private TabCounter mTabsCounter;
@@ -546,9 +545,7 @@ public class BrowserToolbar extends GeckoRelativeLayout
             }
         });
 
-        //Armann
         mReload = (ImageButton) findViewById(R.id.reload);
-        mReload.setImageResource(R.drawable.ic_menu_reload);
         mReload.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -985,7 +982,6 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public void setPageActionVisibility(boolean isLoading) {
         // Handle the loading mode page actions
         mStop.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-        //Armann
         mReload.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 
         // Handle the viewing mode page actions
