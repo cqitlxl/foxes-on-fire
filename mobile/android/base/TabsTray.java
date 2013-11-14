@@ -27,6 +27,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.AdapterView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -276,6 +278,7 @@ public class TabsTray extends TwoWayView
             }
         }
 
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TabRow row;
@@ -284,6 +287,16 @@ public class TabsTray extends TwoWayView
                 convertView = mInflater.inflate(R.layout.tabs_row, null);
                 row = new TabRow(convertView);
                 row.close.setOnClickListener(mOnCloseClickListener);
+
+                row.thumbnail.setOnLongClickListener(new ImageView.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        Log.w("myApp", "long CLICK: " + view.getId() + "\n");
+                        Log.w("myApp", "long CLICK: " + view.getParent() + "\n");
+                        return true;
+                    }
+                });
+
                 convertView.setTag(row);
             } else {
                 row = (TabRow) convertView.getTag();
