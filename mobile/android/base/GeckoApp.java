@@ -95,6 +95,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -209,6 +210,9 @@ abstract public class GeckoApp
 
     private static final String RESTARTER_ACTION = "org.mozilla.gecko.restart";
     private static final String RESTARTER_CLASS = "org.mozilla.gecko.Restarter";
+
+    //Larry
+    private static ImageView mImageLarry;
 
     @SuppressWarnings("serial")
     class SessionRestoreException extends Exception {
@@ -1240,6 +1244,10 @@ abstract public class GeckoApp
         // Set up Gecko layout.
         mGeckoLayout = (RelativeLayout) findViewById(R.id.gecko_layout);
         mMainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        //Larry
+        mImageLarry = (ImageView) findViewById(R.id.arrowii);
+
+    
 
         // Set up tabs panel.
         mTabsPanel = (TabsPanel) findViewById(R.id.tabs_panel);
@@ -2707,4 +2715,14 @@ abstract public class GeckoApp
         }
         return versionCode;
     }
+
+
+    public static ImageView larry(){
+ 
+        return mImageLarry;
+    }
+
+
+
+
 }

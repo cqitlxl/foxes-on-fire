@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.gecko.gfx;
-
+import org.mozilla.gecko.GeckoApp;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoEvent;
 import org.mozilla.gecko.PrefsHelper;
@@ -29,6 +29,8 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+
 
 /*
  * Handles the kinetic scrolling and zooming physics for a layer controller.
@@ -154,6 +156,9 @@ class JavaPanZoomController
     private boolean threeFingers;
     
     private int screenWidth;
+
+    //Larry
+    private ImageView mImageLarry;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -571,7 +576,8 @@ class JavaPanZoomController
         }
         else if (twoFingers){
             
-            handelTwofFingerFling();
+            handleTwofFingerFling();
+
         }
         else {
             // Sofia's and Jessica's function
@@ -1545,7 +1551,7 @@ class JavaPanZoomController
     }
 
     // checks if a two finger swipe movement can be recognized as a fling instead of a pan movement...
-    private boolean handelTwofFingerFling() {
+    private boolean handleTwofFingerFling() {
         /*
         * Condition for a movment to be recognised as a two finger swipe
         * Distance between p1 and p2 should remain KINDA the same at start and end possition
@@ -1566,6 +1572,9 @@ class JavaPanZoomController
             (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
                 Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
             Log.w("myApp", "*** two finger backwards \n");
+            mImageLarry = GeckoApp.larry();
+            mImageLarry.setVisibility(View.VISIBLE);
+
             Tabs.getInstance().getSelectedTab().doBack();
           return true;
         }
