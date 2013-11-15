@@ -146,15 +146,4 @@ public class MenuReadingList extends Fragment {
             mAdapter.swapCursor(null);
         }
     }
-
-    public void hide() {
-        getView().findViewById(R.id.list).setLayoutParams(
-                new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT));
-    }
-
-    public void show() {
-        getView().findViewById(R.id.list).setLayoutParams(
-                new LinearLayout.LayoutParams(50, LinearLayout.LayoutParams.MATCH_PARENT));
-    }
-
 }

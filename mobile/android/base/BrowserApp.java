@@ -5,6 +5,8 @@
 
 package org.mozilla.gecko;
 
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import org.mozilla.gecko.animation.PropertyAnimator;
 import org.mozilla.gecko.db.BrowserContract.Combined;
 import org.mozilla.gecko.db.BrowserDB;
@@ -117,7 +119,6 @@ abstract public class BrowserApp extends GeckoApp
     protected Telemetry.Timer mAboutHomeStartupTimer = null;
 
     private boolean mMenuReadingListShown = false;
-    private MenuReadingList mMenuReadingList;
 
     private static final int GECKO_TOOLS_MENU = -1;
     private static final int ADDON_MENU_OFFSET = 1000;
@@ -240,7 +241,6 @@ abstract public class BrowserApp extends GeckoApp
                 break;
             case PAGE_SHOW:
                 if(ReaderModeUtils.isAboutReader(tab.getURL())) {
-                    Log.i("MyActivity", "Reading mode page");
                     if(!mMenuReadingListShown) {
                         showMenuReadingList();
                     }
@@ -2449,16 +2449,14 @@ abstract public class BrowserApp extends GeckoApp
     }
 
     private void showMenuReadingList() {
-        FragmentManager manager = getSupportFragmentManager();
-        mMenuReadingList = (MenuReadingList) manager.findFragmentById(R.id.menu_reading_list);
-        mMenuReadingList.show();
+        View mMenuReadingList = findViewById(R.id.reading_list_container);
+        mMenuReadingList.setVisibility(View.VISIBLE);
         mMenuReadingListShown = true;
     }
 
     private void hideMenuReadingList() {
-        FragmentManager manager = getSupportFragmentManager();
-        mMenuReadingList = (MenuReadingList) manager.findFragmentById(R.id.menu_reading_list);
-        mMenuReadingList.hide();
+        View mMenuReadingList = findViewById(R.id.reading_list_container);
+        mMenuReadingList.setVisibility(View.INVISIBLE);
         mMenuReadingListShown = false;
     }
 }
