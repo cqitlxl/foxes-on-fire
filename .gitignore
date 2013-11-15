@@ -60,3 +60,7 @@ toolkit/devtools/chrome.manifest
 
 #Ignore mercurial files
 .hg
+
+#Ignore intellij files
+*.idea
+*.iml
