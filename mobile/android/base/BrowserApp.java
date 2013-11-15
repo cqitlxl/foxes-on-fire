@@ -21,6 +21,7 @@ import org.mozilla.gecko.home.HomePager;
 import org.mozilla.gecko.home.HomePager.OnUrlOpenListener;
 import org.mozilla.gecko.home.SearchEngine;
 import org.mozilla.gecko.menu.GeckoMenu;
+import org.mozilla.gecko.menu.MenuReadingList;
 import org.mozilla.gecko.prompts.Prompt;
 import org.mozilla.gecko.util.Clipboard;
 import org.mozilla.gecko.util.GamepadUtils;
@@ -114,6 +115,9 @@ abstract public class BrowserApp extends GeckoApp
     private HomePager mHomePager;
     private View mHomePagerContainer;
     protected Telemetry.Timer mAboutHomeStartupTimer = null;
+
+    private boolean mMenuReadingListShown = false;
+    private MenuReadingList mMenuReadingList;
 
     private static final int GECKO_TOOLS_MENU = -1;
     private static final int ADDON_MENU_OFFSET = 1000;
@@ -235,6 +239,16 @@ abstract public class BrowserApp extends GeckoApp
                 }
                 break;
             case PAGE_SHOW:
+                if(ReaderModeUtils.isAboutReader(tab.getURL())) {
+                    Log.i("MyActivity", "Reading mode page");
+                    if(!mMenuReadingListShown) {
+                        showMenuReadingList();
+                    }
+                } else {
+                    if(mMenuReadingListShown) {
+                        hideMenuReadingList();
+                    }
+                }
                 loadFavicon(tab);
                 break;
             case LINK_FAVICON:
@@ -859,7 +873,7 @@ abstract public class BrowserApp extends GeckoApp
             url = ReaderModeUtils.getUrlFromAboutReader(url);
 
         GeckoAppShell.openUriExternal(url, "text/plain", "", "",
-                                      Intent.ACTION_SEND, tab.getDisplayTitle());
+                Intent.ACTION_SEND, tab.getDisplayTitle());
     }
 
     @Override
@@ -2432,5 +2446,19 @@ abstract public class BrowserApp extends GeckoApp
 
         Log.w(LOGTAG, "No candidate updater found; ignoring launch request.");
         return false;
+    }
+
+    private void showMenuReadingList() {
+        FragmentManager manager = getSupportFragmentManager();
+        mMenuReadingList = (MenuReadingList) manager.findFragmentById(R.id.menu_reading_list);
+        mMenuReadingList.show();
+        mMenuReadingListShown = true;
+    }
+
+    private void hideMenuReadingList() {
+        FragmentManager manager = getSupportFragmentManager();
+        mMenuReadingList = (MenuReadingList) manager.findFragmentById(R.id.menu_reading_list);
+        mMenuReadingList.hide();
+        mMenuReadingListShown = false;
     }
 }

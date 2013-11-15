@@ -1,5 +1,6 @@
 package org.mozilla.gecko.menu;
 
+import android.widget.LinearLayout;
 import org.mozilla.gecko.R;
 import org.mozilla.gecko.db.BrowserContract.Bookmarks;
 import org.mozilla.gecko.db.BrowserDB;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import org.mozilla.gecko.widget.ActivityChooserModel;
 
 
 public class MenuReadingList extends Fragment {
@@ -38,8 +40,7 @@ public class MenuReadingList extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroupContainer,
 		Bundle savedInstanceState) {
-		View view = layoutInflater.inflate(R.layout.menu_reading_list, viewGroupContainer, false);
-		return view;
+		return layoutInflater.inflate(R.layout.menu_reading_list, viewGroupContainer, false);
 	}
 
     @Override
@@ -67,7 +68,7 @@ public class MenuReadingList extends Fragment {
                 Tabs.getInstance().loadUrl(url);
             }
         });
-	}
+    }
 
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -144,6 +145,16 @@ public class MenuReadingList extends Fragment {
         public void onLoaderReset(Loader<Cursor> loader) {
             mAdapter.swapCursor(null);
         }
+    }
+
+    public void hide() {
+        getView().findViewById(R.id.list).setLayoutParams(
+                new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT));
+    }
+
+    public void show() {
+        getView().findViewById(R.id.list).setLayoutParams(
+                new LinearLayout.LayoutParams(50, LinearLayout.LayoutParams.MATCH_PARENT));
     }
 
 }
