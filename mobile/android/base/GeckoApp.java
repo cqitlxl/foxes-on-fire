@@ -1145,9 +1145,6 @@ abstract public class GeckoApp
             enableStrictMode();
         }
 
-        Log.i("MyActivity", "Call on Reader List");
-        MenuReadingList fragment = (MenuReadingList) getSupportFragmentManager().findFragmentById(R.id.menu_reading_list);
-
         // The clock starts...now. Better hurry!
         mJavaUiStartupTimer = new Telemetry.Timer("FENNEC_STARTUP_TIME_JAVAUI");
         mGeckoReadyStartupTimer = new Telemetry.Timer("FENNEC_STARTUP_TIME_GECKOREADY");
