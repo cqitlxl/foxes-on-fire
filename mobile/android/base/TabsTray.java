@@ -288,15 +288,6 @@ public class TabsTray extends TwoWayView
                 row = new TabRow(convertView);
                 row.close.setOnClickListener(mOnCloseClickListener);
 
-                row.thumbnail.setOnLongClickListener(new ImageView.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        Log.w("myApp", "long CLICK: " + view.getId() + "\n");
-                        Log.w("myApp", "long CLICK: " + view.getParent() + "\n");
-                        return true;
-                    }
-                });
-
                 convertView.setTag(row);
             } else {
                 row = (TabRow) convertView.getTag();
@@ -426,6 +417,11 @@ public class TabsTray extends TwoWayView
         private boolean mSwiping;
         private boolean mEnabled;
 
+        private float mLongPressStartPosX;
+        private float mLongPressStartPosY;
+        private long mLongPressStart;
+        private boolean mTriedLongPress;
+
         public TabSwipeGestureListener() {
             mSwipeView = null;
             mSwipeViewPosition = TwoWayView.INVALID_POSITION;
@@ -465,14 +461,22 @@ public class TabsTray extends TwoWayView
                 mListHeight = TabsTray.this.getHeight();
             }
 
+
             switch (e.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
                     // Check if we should set pressed state on the
                     // touched view after a standard delay.
                     triggerCheckForTap();
+                   
+                    mLongPressStart = e.getEventTime();
+                    //Log.w("myApp","event time: " + e.getEventTime() + "\n");
 
                     final float x = e.getRawX();
                     final float y = e.getRawY();
+
+                    mLongPressStartPosX = x;    // move down to the if
+                    mLongPressStartPosY = y;
+                    mTriedLongPress = false;
 
                     // Find out which view is being touched
                     mSwipeView = findViewAt(x, y);
@@ -496,6 +500,10 @@ public class TabsTray extends TwoWayView
 
                     cancelCheckForTap();
                     mSwipeView.setPressed(false);
+                   
+                    mLongPressStart = 0;
+
+                    Log.w("myApp","UP\n");
 
                     if (!mSwiping) {
                         TabRow tab = (TabRow) mSwipeView.getTag();
@@ -563,6 +571,26 @@ public class TabsTray extends TwoWayView
                         break;
 
                     mVelocityTracker.addMovement(e);
+
+                    long time = e.getEventTime() - mLongPressStart;
+                    if(time > 800){
+                            final float xMove = e.getRawX();
+                            final float yMove = e.getRawY();
+
+                            if(!mTriedLongPress){
+                                mTriedLongPress = true;
+                                //if finger position didn't change compared to the touch DOWN
+                                //the event is considered as longclick
+                                if((Math.abs(mLongPressStartPosX - xMove) < 50) && 
+                                   (Math.abs(mLongPressStartPosY - yMove) < 50)){
+                                //you've got only one chance to longclick per touch
+                                
+                                    Log.w("myApp", "LONGCLICK: " + time + "\n");
+                                    Log.w("myApp", "hast du?: " + showContextMenuForChild(mSwipeView) + " " + mSwipeView.toString() + "\n");
+                                    return false;
+                                }
+                            }
+                    }
 
                     final boolean isVertical = isVertical();
 
