@@ -8,6 +8,7 @@ import org.mozilla.gecko.GeckoApp;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoEvent;
 import org.mozilla.gecko.PrefsHelper;
+import org.mozilla.gecko.R;
 import org.mozilla.gecko.Tab;
 import org.mozilla.gecko.Tabs;
 import org.mozilla.gecko.ZoomConstraints;
@@ -19,6 +20,8 @@ import org.mozilla.gecko.util.ThreadUtils;
 
 import org.json.JSONObject;
 import java.lang.Math;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
@@ -31,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import android.os.Handler;
 
 /*
  * Handles the kinetic scrolling and zooming physics for a layer controller.
@@ -158,7 +162,7 @@ class JavaPanZoomController
     private int screenWidth;
 
     //Larry
-    private ImageView mImageLarry;
+    private ImageView mSwipeIndicator;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -1572,8 +1576,16 @@ class JavaPanZoomController
             (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
                 Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
             Log.w("myApp", "*** two finger backwards \n");
-            mImageLarry = GeckoApp.larry();
-            mImageLarry.setVisibility(View.VISIBLE);
+            mSwipeIndicator = GeckoApp.getSwipeIndicator();
+            mSwipeIndicator.setImageResource(R.drawable.back_arrow);
+            mSwipeIndicator.setVisibility(View.VISIBLE);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run(){
+                    mSwipeIndicator.setVisibility(View.GONE);    
+                }
+            }, 1000);
 
             Tabs.getInstance().getSelectedTab().doBack();
           return true;

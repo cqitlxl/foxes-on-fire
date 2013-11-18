@@ -39,10 +39,10 @@
                           android:layout_width="fill_parent"
                           android:layout_height="fill_parent"/>
 
-                <ImageView android:id="@+id/arrowii"
+                <ImageView android:id="@+id/swipe_indicator"
                            android:layout_width="80dp"
                            android:layout_height="80dp"
-                           android:src="@drawable/larry"
+                           android:layout_gravity="center_vertical|left"
                            android:visibility="gone"/>
 
 

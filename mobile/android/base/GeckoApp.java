@@ -212,7 +212,7 @@ abstract public class GeckoApp
     private static final String RESTARTER_CLASS = "org.mozilla.gecko.Restarter";
 
     //Larry
-    private static ImageView mImageLarry;
+    private static ImageView mSwipeIndicator;
 
     @SuppressWarnings("serial")
     class SessionRestoreException extends Exception {
@@ -1245,7 +1245,7 @@ abstract public class GeckoApp
         mGeckoLayout = (RelativeLayout) findViewById(R.id.gecko_layout);
         mMainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         //Larry
-        mImageLarry = (ImageView) findViewById(R.id.arrowii);
+        mSwipeIndicator = (ImageView) findViewById(R.id.swipe_indicator);
 
     
 
@@ -2717,9 +2717,9 @@ abstract public class GeckoApp
     }
 
 
-    public static ImageView larry(){
+    public static ImageView getSwipeIndicator(){
  
-        return mImageLarry;
+        return mSwipeIndicator;
     }
 
 
