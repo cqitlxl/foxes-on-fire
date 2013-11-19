@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +61,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -68,6 +71,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.Interpolator;
@@ -200,12 +204,16 @@ abstract public class BrowserApp extends GeckoApp
                     maybeCancelFaviconLoad(tab);
                     //Loads reading list menu
                     if(ReaderModeUtils.isAboutReader(tab.getURL())) {
-                        if(!mMenuReadingListShown) {
-                            showMenuReadingList();
-                        }
+                        //if(!mMenuReadingListShown) {
+                            //showMenuReadingList();
+                            SwipeFromEdgeListener swipeListener = new SwipeFromEdgeListener(getApplicationContext());
+                            Log.i("MyActivity", "Initializing fling listener!!!!!");
+                            mHomePagerContainer.setOnTouchListener(swipeListener);
+                        //}
                     } else {
                         if(mMenuReadingListShown) {
                             hideMenuReadingList();
+                            mHomePagerContainer.setOnTouchListener(null);
                         }
                     }
                 }
@@ -2458,5 +2466,59 @@ abstract public class BrowserApp extends GeckoApp
         View mMenuReadingList = findViewById(R.id.reading_list_container);
         mMenuReadingList.setVisibility(View.INVISIBLE);
         mMenuReadingListShown = false;
+    }
+
+    private class SwipeFromEdgeListener extends SimpleOnGestureListener implements OnTouchListener{
+        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_MAX_OFF_PATH = 250;
+        private static final int SWIPE_TRESHOLD_VELOCITY = 200;
+        Context context;
+        GestureDetector gDetector;
+
+        public SwipeFromEdgeListener(){
+            super();
+        }
+
+        public SwipeFromEdgeListener(Context context){
+            this(context, null);
+        }
+
+        public SwipeFromEdgeListener(Context context, GestureDetector gDetector){
+            if(gDetector == null){
+                gDetector = new GestureDetector(context, this);
+            }
+            this.context = context;
+            this.gDetector = gDetector;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY){
+            Log.i("MyActivity", "I'm flining");
+            if(Math.abs(event1.getX() - event2.getX()) > SWIPE_MIN_DISTANCE 
+                && Math.abs(event1.getY() - event2.getY()) < SWIPE_MAX_OFF_PATH){
+                Log.i("MyActivity", "...in the rain");
+                if(event1.getX() < event2.getX()){
+                    Log.i("MyActivity", "Not to sneeeed ");
+                    showMenuReadingList();
+                } else {
+                    Log.i("MyActivity", "Righty handed fun");
+                    hideMenuReadingList();
+                }
+            } 
+            return true; //super.onFling(event1, event2, velocityX, velocityY);
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event){
+            Log.i("MyActivity", "CAN'T TOUCH THIS");
+            return gDetector.onTouchEvent(event);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent event){
+            boolean res = super.onDown(event);
+            Log.i("MyActivity", "onDown: res = " + res);
+            return true;
+        }
     }
 }
