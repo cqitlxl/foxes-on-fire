@@ -2504,21 +2504,25 @@ abstract public class BrowserApp extends GeckoApp
                     Log.i("MyActivity", "Righty handed fun");
                     hideMenuReadingList();
                 }
+                return true;
             } 
-            return true; //super.onFling(event1, event2, velocityX, velocityY);
+            return false; //super.onFling(event1, event2, velocityX, velocityY);
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event){
-            Log.i("MyActivity", "CAN'T TOUCH THIS");
-            return gDetector.onTouchEvent(event);
+            boolean res = gDetector.onTouchEvent(event);
+            Log.i("MyActivity", "CAN'T TOUCH THIS: " + res);
+            return res;
         }
 
-        @Override
         public boolean onDown(MotionEvent event){
             boolean res = super.onDown(event);
-            Log.i("MyActivity", "onDown: res = " + res);
-            return true;
+            Log.i("MyActivity", "onDown: event.getX = " + event.getRawX());
+            if(event.getRawX() < 200){
+                return true;
+            }
+            return false;
         }
     }
 }
