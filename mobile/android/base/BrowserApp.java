@@ -198,6 +198,16 @@ abstract public class BrowserApp extends GeckoApp
             case LOCATION_CHANGE:
                 if (Tabs.getInstance().isSelectedTab(tab)) {
                     maybeCancelFaviconLoad(tab);
+                    //Loads reading list menu
+                    if(ReaderModeUtils.isAboutReader(tab.getURL())) {
+                        if(!mMenuReadingListShown) {
+                            showMenuReadingList();
+                        }
+                    } else {
+                        if(mMenuReadingListShown) {
+                            hideMenuReadingList();
+                        }
+                    }
                 }
                 // fall through
             case SELECTED:
@@ -239,15 +249,6 @@ abstract public class BrowserApp extends GeckoApp
                 }
                 break;
             case PAGE_SHOW:
-                if(ReaderModeUtils.isAboutReader(tab.getURL())) {
-                    if(!mMenuReadingListShown) {
-                        showMenuReadingList();
-                    }
-                } else {
-                    if(mMenuReadingListShown) {
-                        hideMenuReadingList();
-                    }
-                }
                 loadFavicon(tab);
                 break;
             case LINK_FAVICON:
