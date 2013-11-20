@@ -207,7 +207,6 @@ abstract public class BrowserApp extends GeckoApp
                         //if(!mMenuReadingListShown) {
                             //showMenuReadingList();
                             SwipeFromEdgeListener swipeListener = new SwipeFromEdgeListener(getApplicationContext());
-                            Log.i("MyActivity", "Initializing fling listener!!!!!");
                             mHomePagerContainer.setOnTouchListener(swipeListener);
                         //}
                     } else {
@@ -2468,6 +2467,10 @@ abstract public class BrowserApp extends GeckoApp
         mMenuReadingListShown = false;
     }
 
+    /**
+     * Listener for swiping in the left side of the screen
+     *
+     */
     private class SwipeFromEdgeListener extends SimpleOnGestureListener implements OnTouchListener{
         private static final int SWIPE_MIN_DISTANCE = 120;
         private static final int SWIPE_MAX_OFF_PATH = 250;
@@ -2493,32 +2496,26 @@ abstract public class BrowserApp extends GeckoApp
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY){
-            Log.i("MyActivity", "I'm flining");
             if(Math.abs(event1.getX() - event2.getX()) > SWIPE_MIN_DISTANCE 
                 && Math.abs(event1.getY() - event2.getY()) < SWIPE_MAX_OFF_PATH){
-                Log.i("MyActivity", "...in the rain");
                 if(event1.getX() < event2.getX()){
-                    Log.i("MyActivity", "Not to sneeeed ");
                     showMenuReadingList();
                 } else {
-                    Log.i("MyActivity", "Righty handed fun");
                     hideMenuReadingList();
                 }
                 return true;
             } 
-            return false; //super.onFling(event1, event2, velocityX, velocityY);
+            return false;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event){
             boolean res = gDetector.onTouchEvent(event);
-            Log.i("MyActivity", "CAN'T TOUCH THIS: " + res);
             return res;
         }
 
         public boolean onDown(MotionEvent event){
             boolean res = super.onDown(event);
-            Log.i("MyActivity", "onDown: event.getX = " + event.getRawX());
             if(event.getRawX() < 200){
                 return true;
             }
