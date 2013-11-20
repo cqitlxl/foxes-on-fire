@@ -211,8 +211,9 @@ abstract public class GeckoApp
     private static final String RESTARTER_ACTION = "org.mozilla.gecko.restart";
     private static final String RESTARTER_CLASS = "org.mozilla.gecko.Restarter";
 
-    //Larry
-    private static ImageView mSwipeIndicator;
+    
+    private static ImageView mSwipeIndicatorBack;
+    private static ImageView mSwipeIndicatorForward;
 
     @SuppressWarnings("serial")
     class SessionRestoreException extends Exception {
@@ -1244,9 +1245,8 @@ abstract public class GeckoApp
         // Set up Gecko layout.
         mGeckoLayout = (RelativeLayout) findViewById(R.id.gecko_layout);
         mMainLayout = (RelativeLayout) findViewById(R.id.main_layout);
-        //Larry
-        mSwipeIndicator = (ImageView) findViewById(R.id.swipe_indicator);
-
+        mSwipeIndicatorBack = (ImageView) findViewById(R.id.swipe_indicator_back);
+        mSwipeIndicatorForward = (ImageView) findViewById(R.id.swipe_indicator_forward);
     
 
         // Set up tabs panel.
@@ -2717,9 +2717,14 @@ abstract public class GeckoApp
     }
 
 
-    public static ImageView getSwipeIndicator(){
+    public static ImageView getSwipeIndicatorBack(){
  
-        return mSwipeIndicator;
+        return mSwipeIndicatorBack;
+    }
+
+    public static ImageView getSwipeIndicatorForward(){
+ 
+        return mSwipeIndicatorForward;
     }
 
 

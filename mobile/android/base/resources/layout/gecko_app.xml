@@ -39,12 +39,19 @@
                           android:layout_width="fill_parent"
                           android:layout_height="fill_parent"/>
 
-                <ImageView android:id="@+id/swipe_indicator"
+                <ImageView android:id="@+id/swipe_indicator_back"
                            android:layout_width="80dp"
                            android:layout_height="80dp"
+                           android:src="@drawable/back_arrow"
                            android:layout_gravity="center_vertical|left"
                            android:visibility="gone"/>
 
+                <ImageView android:id="@+id/swipe_indicator_forward"
+                           android:layout_width="80dp"
+                           android:layout_height="80dp"
+                           android:src="@drawable/forward_arrow"
+                           android:layout_gravity="center_vertical|right"
+                           android:visibility="gone"/>
 
             </FrameLayout>
 

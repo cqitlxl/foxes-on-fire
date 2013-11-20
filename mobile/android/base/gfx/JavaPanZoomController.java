@@ -161,8 +161,8 @@ class JavaPanZoomController
     
     private int screenWidth;
 
-    //Larry
-    private ImageView mSwipeIndicator;
+    private ImageView mSwipeIndicatorBack;
+    private ImageView mSwipeIndicatorForward;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
@@ -1568,27 +1568,38 @@ class JavaPanZoomController
         if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
             (endPointerOneX - startPointerOneX) > - screenWidth * FLING_DISTANCE &&
                 Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
-                Log.w("myApp", "*** two finger forward \n");
-              Tabs.getInstance().getSelectedTab().doForward();
-          return true;
-        }
-        else if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
-            (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
-                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
-            Log.w("myApp", "*** two finger backwards \n");
-            mSwipeIndicator = GeckoApp.getSwipeIndicator();
-            mSwipeIndicator.setImageResource(R.drawable.back_arrow);
-            mSwipeIndicator.setVisibility(View.VISIBLE);
+                
+            Log.w("myApp", "*** two finger forward \n");
+            mSwipeIndicatorForward = GeckoApp.getSwipeIndicatorForward();
+            mSwipeIndicatorForward.setVisibility(View.VISIBLE);
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run(){
-                    mSwipeIndicator.setVisibility(View.GONE);    
+                    mSwipeIndicatorForward.setVisibility(View.GONE);    
+                }
+            }, 1000);
+
+            Tabs.getInstance().getSelectedTab().doForward();
+            return true;
+        }
+        else if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
+            (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
+                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
+
+            Log.w("myApp", "*** two finger backwards \n");
+            mSwipeIndicatorBack = GeckoApp.getSwipeIndicatorBack();
+            mSwipeIndicatorBack.setVisibility(View.VISIBLE);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run(){
+                    mSwipeIndicatorBack.setVisibility(View.GONE);    
                 }
             }, 1000);
 
             Tabs.getInstance().getSelectedTab().doBack();
-          return true;
+            return true;
         }
         newMultiFingerEvent = true;
         return false;
