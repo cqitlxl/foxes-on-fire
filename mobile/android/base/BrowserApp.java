@@ -61,6 +61,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.InputDevice;
@@ -2477,6 +2478,7 @@ abstract public class BrowserApp extends GeckoApp
         private static final int SWIPE_TRESHOLD_VELOCITY = 200;
         Context context;
         GestureDetector gDetector;
+        private Display display;
 
         public SwipeFromEdgeListener(){
             super();
@@ -2492,32 +2494,44 @@ abstract public class BrowserApp extends GeckoApp
             }
             this.context = context;
             this.gDetector = gDetector;
+            display = getWindowManager().getDefaultDisplay(); 
         }
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY){
-            if(Math.abs(event1.getX() - event2.getX()) > SWIPE_MIN_DISTANCE 
-                && Math.abs(event1.getY() - event2.getY()) < SWIPE_MAX_OFF_PATH){
-                if(event1.getX() < event2.getX()){
-                    showMenuReadingList();
-                } else {
-                    hideMenuReadingList();
+            if(Math.abs(event1.getY() - event2.getY()) < SWIPE_MAX_OFF_PATH){
+                if(Math.abs(event1.getX() - event2.getX()) > SWIPE_MIN_DISTANCE){
+                    if(event1.getX() < event2.getX()){
+                        showMenuReadingList();
+                    }
                 }
                 return true;
-            } 
+            }
             return false;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event){
             boolean res = gDetector.onTouchEvent(event);
+            if (!res) {
+                boolean newOnTouch = mHomePagerContainer.onTouchEvent(event);
+                return newOnTouch;
+            }
             return res;
         }
 
         public boolean onDown(MotionEvent event){
             boolean res = super.onDown(event);
-            if(event.getRawX() < 200){
+            int width = display.getWidth(); 
+            int height = display.getHeight();
+            float rawX = event.getRawX();
+            float rawY = event.getRawY();
+            if(rawX < 200 && rawY > mToolbarHeight && rawY < (height*0.85) && !mMenuReadingListShown){
                 return true;
+            } else {
+                if (rawX > findViewById(R.id.menu_reading_list).getWidth() && mMenuReadingListShown) {
+                    hideMenuReadingList();
+                }
             }
             return false;
         }
