@@ -208,9 +208,6 @@ abstract public class BrowserApp extends GeckoApp
                     if(ReaderModeUtils.isAboutReader(tab.getURL())) {
                         SwipeFromEdgeListener swipeListener = new SwipeFromEdgeListener(getApplicationContext());
                         mHomePagerContainer.setOnTouchListener(swipeListener);
-                        mMenuReadingListWidth = getWindowManager().getDefaultDisplay().getWidth()/3;
-                        findViewById(R.id.reading_list_container).setLayoutParams(new RelativeLayout.LayoutParams(
-                                mMenuReadingListWidth, RelativeLayout.LayoutParams.MATCH_PARENT));
                     } else {
                         if(mMenuReadingListShown) {
                             hideMenuReadingList();
@@ -2458,7 +2455,16 @@ abstract public class BrowserApp extends GeckoApp
     }
 
     private void showMenuReadingList() {
+        mMenuReadingListWidth = getWindowManager().getDefaultDisplay().getWidth()/3;
         View mMenuReadingList = findViewById(R.id.reading_list_container);
+        if(mBrowserToolbar.isVisible()) {
+            mMenuReadingList.setPadding(0,mToolbarHeight, 0, 0);
+        } else {
+            mMenuReadingList.setPadding(0, 0, 0, 0);
+        }
+        mMenuReadingList.setLayoutParams(new RelativeLayout.LayoutParams(
+                mMenuReadingListWidth, RelativeLayout.LayoutParams.MATCH_PARENT));
+
         mMenuReadingList.setVisibility(View.VISIBLE);
         mMenuReadingListShown = true;
     }
