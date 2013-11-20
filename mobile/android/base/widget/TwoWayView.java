@@ -48,7 +48,9 @@ import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
 import android.view.FocusFinder;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -411,6 +413,23 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
         a.recycle();
 
         updateScrollbarsDirection();
+    }
+
+    /*dasdasdasd*/
+    @Override 
+    public void onCreateContextMenu(ContextMenu menu) {
+        Log.w("myApp","in Create COntext menu");
+        super.onCreateContextMenu(menu);
+
+        // TextView text = (TextView) v.findViewById(R.id.btitle); 
+        // CharSequence itemTitle = text.getText(); 
+        CharSequence itemTitle = "Hallo - Das ist eine Ueberschrift"; 
+        menu.setHeaderTitle(itemTitle);
+
+        MenuInflater inflater = new MenuInflater(this.getContext());
+        inflater.inflate(R.menu.tabstray_contextmenu, menu);
+
+        return;
     }
 
     public void setOrientation(Orientation orientation) {
@@ -1232,12 +1251,14 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
 
     @Override
     public boolean showContextMenuForChild(View originalView) {
+
         final int longPressPosition = getPositionForView(originalView);
         if (longPressPosition >= 0) {
             final long longPressId = mAdapter.getItemId(longPressPosition);
             boolean handled = false;
 
             OnItemLongClickListener listener = getOnItemLongClickListener();
+
             if (listener != null) {
                 handled = listener.onItemLongClick(TwoWayView.this, originalView,
                         longPressPosition, longPressId);
@@ -1247,6 +1268,8 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
                 mContextMenuInfo = createContextMenuInfo(
                         getChildAt(longPressPosition - mFirstPosition),
                         longPressPosition, longPressId);
+
+                Log.w("myApp", "SHOWCONTEXTMENUFORCHILD: " + getChildAt(longPressPosition - mFirstPosition) + "\n");
 
                 handled = super.showContextMenuForChild(originalView);
             }

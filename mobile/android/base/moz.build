@@ -897,6 +897,7 @@ ANDROID_RESFILES += [
     'resources/menu/browser_app_menu.xml',
     'resources/menu/gecko_app_menu.xml',
     'resources/menu/home_contextmenu.xml',
+    'resources/menu/tabstray_contextmenu.xml',
     'resources/menu/titlebar_contextmenu.xml',
     'resources/menu/top_sites_contextmenu.xml',
     'resources/values-land/integers.xml',

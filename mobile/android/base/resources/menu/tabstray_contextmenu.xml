@@ -6,21 +6,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/tabstray_open"
-          android:title="@string/contextmenu_open"/>
+          android:title="Open Tab"/>
 
     <item android:id="@+id/tabstray_clone"
-          android:title="@string/contextmenu_open_private_tab"/>
+          android:title="Clone Tab"/>
 
     <item android:id="@+id/tabstray_close"
-          android:title="@string/contextmenu_close"/>
+          android:title="Close Tab"/>
 
     <item android:id="@+id/tabstray_share"
-          android:title="@string/contextmenu_share"/>
+          android:title="Share Tab"/>
 
     <item android:id="@+id/tabstray_download"
-          android:title="@string/contextmenu_download"/>
+          android:title="Download Tab"/>
 
     <item android:id="@+id/tabstray_bookmark"
-          android:title="@string/contextmenu_bookmark"/>
+          android:title="Bookmark Tab"/>
 
 </menu>

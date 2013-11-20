@@ -585,6 +585,7 @@ public class TabsTray extends TwoWayView
                                    (Math.abs(mLongPressStartPosY - yMove) < 50)){
                                 //you've got only one chance to longclick per touch
                                 
+                                    //performLongPress(mSwipeView, 0, 0);
                                     Log.w("myApp", "LONGCLICK: " + time + "\n");
                                     Log.w("myApp", "hast du?: " + showContextMenuForChild(mSwipeView) + " " + mSwipeView.toString() + "\n");
                                     return false;
