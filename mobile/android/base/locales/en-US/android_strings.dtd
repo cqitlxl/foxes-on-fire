@@ -229,6 +229,13 @@ size. -->
 <!ENTITY contextmenu_top_sites_pin "Pin Site">
 <!ENTITY contextmenu_top_sites_unpin "Unpin Site">
 
+<!ENTITY contextmenu_open "Open Tab">
+<!ENTITY contextmenu_clone "Clone Tab">
+<!ENTITY contextmenu_close "Close Tab">
+<!ENTITY contextmenu_share "Share Tab">
+<!ENTITY contextmenu_download "Download">
+<!ENTITY contextmenu_bookmark "Bookmark">
+
 <!ENTITY pref_titlebar_mode "Title bar">
 <!ENTITY pref_titlebar_mode_title "Show page title">
 <!ENTITY pref_titlebar_mode_url "Show page address">
