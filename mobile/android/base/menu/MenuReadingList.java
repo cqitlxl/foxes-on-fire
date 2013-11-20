@@ -28,7 +28,7 @@ import org.mozilla.gecko.widget.ActivityChooserModel;
 
 public class MenuReadingList extends Fragment {
 
-	// The view shown by the fragment
+    // The view shown by the fragment
     private ListView mList;
 
     private MenuReadingListAdapter mAdapter;
@@ -37,11 +37,11 @@ public class MenuReadingList extends Fragment {
 
     private boolean mIsLoaded;
 
-	@Override
-	public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroupContainer,
-		Bundle savedInstanceState) {
-		return layoutInflater.inflate(R.layout.menu_reading_list, viewGroupContainer, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroupContainer,
+                             Bundle savedInstanceState) {
+        return layoutInflater.inflate(R.layout.menu_reading_list, viewGroupContainer, false);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -49,10 +49,10 @@ public class MenuReadingList extends Fragment {
         mIsLoaded = false;
     }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {	    
-		super.onCreate(savedInstanceState);
-	    mList = (ListView) view.findViewById(R.id.list);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mList = (ListView) view.findViewById(R.id.list);
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -70,10 +70,10 @@ public class MenuReadingList extends Fragment {
         });
     }
 
-	@Override
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-	    mAdapter = new MenuReadingListAdapter(getActivity(), null);
+        mAdapter = new MenuReadingListAdapter(getActivity(), null);
         mList.setAdapter(mAdapter);
 
         mCursorLoaderCallbacks = new CursorLoaderCallbacks();
@@ -102,7 +102,7 @@ public class MenuReadingList extends Fragment {
         }
     }
 
-     /**
+    /**
      * Cursor adapter for the list of reading list items.
      */
     private class MenuReadingListAdapter extends CursorAdapter {
@@ -112,7 +112,7 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor){
-        	TextView row = (TextView) view;
+            TextView row = (TextView) view;
             String title = "No title";
             if(cursor != null){
                 title = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.TITLE));
@@ -122,7 +122,7 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent){
-        	return LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_reading_list_item, parent, false);
+            return LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_reading_list_item, parent, false);
         }
     }
 
