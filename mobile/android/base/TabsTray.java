@@ -53,6 +53,8 @@ public class TabsTray extends TwoWayView
     private static final String ABOUT_HOME = "about:home";
     private int mOriginalSize = 0;
 
+    private boolean mContextMenuOpened = false;
+
     public TabsTray(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -497,14 +499,16 @@ public class TabsTray extends TwoWayView
                 case MotionEvent.ACTION_UP: {
                     if (mSwipeView == null)
                         break;
+                    if (mContextMenuOpened == true){
+                        mContextMenuOpened = false;
+                        break;
+                    }
 
                     cancelCheckForTap();
                     mSwipeView.setPressed(false);
                    
                     mLongPressStart = 0;
-
-                    Log.w("myApp","UP\n");
-
+                    
                     if (!mSwiping) {
                         TabRow tab = (TabRow) mSwipeView.getTag();
                         Tabs.getInstance().selectTab(tab.id);
@@ -548,7 +552,7 @@ public class TabsTray extends TwoWayView
                         }
 
                         dismissTranslation = (dismissDirection ? mListHeight : -mListHeight);
-                     }
+                    }
 
                     if (dismiss)
                         animateClose(mSwipeView, dismissTranslation);
@@ -585,9 +589,9 @@ public class TabsTray extends TwoWayView
                                    (Math.abs(mLongPressStartPosY - yMove) < 50)){
                                 //you've got only one chance to longclick per touch
                                 
-                                    //performLongPress(mSwipeView, 0, 0);
-                                    Log.w("myApp", "LONGCLICK: " + time + "\n");
-                                    Log.w("myApp", "hast du?: " + showContextMenuForChild(mSwipeView) + " " + mSwipeView.toString() + "\n");
+                                    //Log.w("myApp", "LONGCLICK: " + time + "\n");
+                                    //Log.w("myApp", "hast du?: " + showContextMenuForChild(mSwipeView) + " " + mSwipeView.toString() + "\n");
+                                    mContextMenuOpened = showContextMenuForChild(mSwipeView);
                                     return false;
                                 }
                             }

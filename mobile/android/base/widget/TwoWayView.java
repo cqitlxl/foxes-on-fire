@@ -418,7 +418,7 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
     /*dasdasdasd*/
     @Override 
     public void onCreateContextMenu(ContextMenu menu) {
-        Log.w("myApp","in Create COntext menu");
+        //Log.w("myApp","in Create COntext menu");
         super.onCreateContextMenu(menu);
 
         // TextView text = (TextView) v.findViewById(R.id.btitle); 
@@ -1269,7 +1269,7 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
                         getChildAt(longPressPosition - mFirstPosition),
                         longPressPosition, longPressId);
 
-                Log.w("myApp", "SHOWCONTEXTMENUFORCHILD: " + getChildAt(longPressPosition - mFirstPosition) + "\n");
+                //Log.w("myApp", "SHOWCONTEXTMENUFORCHILD: " + getChildAt(longPressPosition - mFirstPosition) + "\n");
 
                 handled = super.showContextMenuForChild(originalView);
             }
