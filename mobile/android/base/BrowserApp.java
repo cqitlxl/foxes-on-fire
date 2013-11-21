@@ -206,13 +206,14 @@ abstract public class BrowserApp extends GeckoApp
                     maybeCancelFaviconLoad(tab);
                     //Loads reading list menu
                     if(ReaderModeUtils.isAboutReader(tab.getURL())) {
+                        Log.v("Reading mode", "Is in reading mode");
                         SwipeFromEdgeListener swipeListener = new SwipeFromEdgeListener(getApplicationContext());
                         mHomePagerContainer.setOnTouchListener(swipeListener);
                     } else {
                         if(mMenuReadingListShown) {
                             hideMenuReadingList();
-                            mHomePagerContainer.setOnTouchListener(null);
                         }
+                        mHomePagerContainer.setOnTouchListener(null);
                     }
                 }
                 // fall through
