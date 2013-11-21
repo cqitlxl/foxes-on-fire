@@ -4,10 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.gecko.gfx;
-
+import org.mozilla.gecko.GeckoApp;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoEvent;
 import org.mozilla.gecko.PrefsHelper;
+import org.mozilla.gecko.R;
 import org.mozilla.gecko.Tab;
 import org.mozilla.gecko.Tabs;
 import org.mozilla.gecko.ZoomConstraints;
@@ -18,7 +19,9 @@ import org.mozilla.gecko.util.GeckoEventListener;
 import org.mozilla.gecko.util.ThreadUtils;
 
 import org.json.JSONObject;
-
+import java.lang.Math;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
@@ -29,6 +32,9 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+
+import android.os.Handler;
 
 /*
  * Handles the kinetic scrolling and zooming physics for a layer controller.
@@ -77,6 +83,15 @@ class JavaPanZoomController
     // The duration of the bounce animation in ns
     private static final int BOUNCE_ANIMATION_DURATION = 250000000;
 
+    // factor for screen witdh to set fling distance 
+    private static double FLING_DISTANCE = 0.33;
+
+    // max deviation between fingers at start and end position in pixels
+    private static int FLING_DEVIATION = 100;
+
+    // max deviation in Y-direction between fling start and end position in pixels
+    private static int MAX_Y_MOVEMENT = 150;
+
     private enum PanZoomState {
         NOTHING,                /* no touch-start events received */
         FLING,                  /* all touches removed, but we're still scrolling page */
@@ -97,6 +112,7 @@ class JavaPanZoomController
         AUTONAV,                /* We are scrolling using an AutonavRunnable animation. This is similar
                                    to the FLING state except that it must be stopped manually by the code that
                                    started it, and it's velocity can be updated while it's running. */
+
     }
 
     private enum AxisLockMode {
@@ -128,28 +144,49 @@ class JavaPanZoomController
     private boolean mMediumPress;
     /* Used to change the scrollY direction */
     private boolean mNegateWheelScrollY;
+    /* Swipe information  start event*/
+    private boolean newMultiFingerEvent;
+    private float startPointerOneX;
+    private float startPointerOneY;
+    private float startPointerTwoX;
+    private float startPointerTwoY;
+    /* Swipe information end event */
+    private float endPointerOneX;
+    private float endPointerOneY;
+    private float endPointerTwoX;
+    private float endPointerTwoY;
+        /* Variables for keeping track of the maximum number of fingers used*/
+    private boolean twoFingers;
+    private boolean threeFingers;
+    
+    private int screenWidth;
+
+    private ImageView mSwipeIndicatorBack;
+    private ImageView mSwipeIndicatorForward;
 
     // Handler to be notified when overscroll occurs
     private Overscroll mOverscroll;
 
     public JavaPanZoomController(PanZoomTarget target, View view, EventDispatcher eventDispatcher) {
+        /* Initialazation of booleans*/
+        newMultiFingerEvent = true;
+        twoFingers = false;
+        threeFingers  = false;
+
+        screenWidth = view.getWidth();
+
         mTarget = target;
         mSubscroller = new SubdocumentScrollHelper(eventDispatcher);
         mX = new AxisX(mSubscroller);
         mY = new AxisY(mSubscroller);
         mTouchEventHandler = new TouchEventHandler(view.getContext(), view, this);
-
         checkMainThread();
-
         setState(PanZoomState.NOTHING);
-
         mEventDispatcher = eventDispatcher;
         registerEventListener(MESSAGE_ZOOM_RECT);
         registerEventListener(MESSAGE_ZOOM_PAGE);
         registerEventListener(MESSAGE_TOUCH_LISTENER);
-
         mMode = AxisLockMode.STANDARD;
-
         String[] prefs = { "ui.scrolling.axis_lock_mode",
                            "ui.scrolling.negate_wheel_scrollY",
                            "ui.scrolling.gamepad_dead_zone" };
@@ -314,6 +351,8 @@ class JavaPanZoomController
             return false;
         }
 
+        Log.w("myApp", "onMOTIONEvent: fingers: " + event.getPointerCount() + "\n");
+
         switch (event.getSource() & InputDevice.SOURCE_CLASS_MASK) {
         case InputDevice.SOURCE_CLASS_POINTER:
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -332,6 +371,29 @@ class JavaPanZoomController
     /** This function MUST be called on the UI thread */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
+        //Log.w("myApp", "Event finger down :" + event.getPointerCount() + "\n");
+        if ((event.getPointerCount() == 2 || event.getPointerCount() == 3) && newMultiFingerEvent ){
+
+                startPointerOneX = event.getX(0);
+                startPointerOneY = event.getY(0);
+                startPointerTwoX = event.getX(1);
+                startPointerTwoY = event.getY(1);
+                newMultiFingerEvent = false;
+        }
+        
+        if (event.getPointerCount() == 2) {
+            twoFingers = true;
+            endPointerOneX = event.getX(0);
+            endPointerOneY = event.getY(0);
+            endPointerTwoX = event.getX(1);
+            endPointerTwoY = event.getY(1);
+        }
+        else if (event.getPointerCount() == 3){
+            threeFingers = true;
+            twoFingers = false;
+            //Log.w("myApp", " Henrik has at least three fingers! \n");
+        }
         return mTouchEventHandler.handleEvent(event);
     }
 
@@ -427,7 +489,7 @@ class JavaPanZoomController
         // user is taking control of movement, so stop
         // any auto-movement we have going
         stopAnimationTask();
-
+        
         switch (mState) {
         case ANIMATED_ZOOM:
             // We just interrupted a double-tap animation, so force a redraw in
@@ -474,6 +536,7 @@ class JavaPanZoomController
             return false;
 
         case TOUCHING:
+            //Log.w("myApp", "touching MOVE\n");
             // Don't allow panning if there is an element in full-screen mode. See bug 775511.
             if (mTarget.isFullScreen() || panDistance(event) < PAN_THRESHOLD) {
                 return false;
@@ -499,6 +562,7 @@ class JavaPanZoomController
             setState(PanZoomState.PANNING);
             // fall through
         case PANNING:
+            //Log.w("myApp", "panning MOVE\n");
             track(event);
             return true;
 
@@ -511,6 +575,22 @@ class JavaPanZoomController
     }
 
     private boolean handleTouchEnd(MotionEvent event) {
+        if (threeFingers){
+            handelThreeFingerFling(event);
+        }
+        else if (twoFingers){
+            
+            handleTwofFingerFling();
+
+        }
+        else {
+            // Sofia's and Jessica's function
+            // (check if in reader mode + check if coordinates of start event are at the edge of the screen)
+            Log.w("myApp", "*** One finger \n");
+        }
+        twoFingers = false;
+        threeFingers = false;
+
 
         switch (mState) {
         case FLING:
@@ -525,28 +605,29 @@ class JavaPanZoomController
             // may happen if user double-taps and drags without lifting after the
             // second tap. ignore if this happens.
             return false;
-
         case TOUCHING:
             // the switch into TOUCHING might have happened while the page was
             // snapping back after overscroll. we need to finish the snap if that
             // was the case
             bounce();
             return false;
-
         case PANNING:
-        case PANNING_LOCKED_X:
+        case PANNING_LOCKED_X:;
         case PANNING_LOCKED_Y:
         case PANNING_HOLD:
         case PANNING_HOLD_LOCKED_X:
         case PANNING_HOLD_LOCKED_Y:
+
             setState(PanZoomState.FLING);
             fling();
+
             return true;
 
         case PINCHING:
             setState(PanZoomState.NOTHING);
             return true;
         }
+
         Log.e(LOGTAG, "Unhandled case " + mState + " in handleTouchEnd");
         return false;
     }
@@ -602,7 +683,6 @@ class JavaPanZoomController
         float velocityX = normalizeJoystickScroll(event, MotionEvent.AXIS_X);
         float velocityY = normalizeJoystickScroll(event, MotionEvent.AXIS_Y);
         float zoomDelta = normalizeJoystickZoom(event, MotionEvent.AXIS_RZ);
-
         if (velocityX == 0 && velocityY == 0 && zoomDelta == 0) {
             if (mState == PanZoomState.AUTONAV) {
                 bounce(); // if not needed, this will automatically go to state NOTHING
@@ -629,6 +709,8 @@ class JavaPanZoomController
         mY.startTouch(y);
         setState(PanZoomState.TOUCHING);
         mLastEventTime = time;
+        //Log.w("myApp", "\n inStartTouch: distanceX;" + x + " \n");
+        //Log.w("myApp", "\n inStartTouch: distanceY;" + y + " \n");
     }
 
     private void startPanning(float x, float y, long time) {
@@ -636,6 +718,8 @@ class JavaPanZoomController
         float dy = mY.panDistance(y);
         double angle = Math.atan2(dy, dx); // range [-pi, pi]
         angle = Math.abs(angle); // range [0, pi]
+        //Log.w("myApp", "\n inStartPanning: distanceX;" + x + " \n");
+        //Log.w("myApp", "\n inStartPanning: distanceY;" + y + " \n");
 
         // When the touch move breaks through the pan threshold, reposition the touch down origin
         // so the page won't jump when we start panning.
@@ -1388,6 +1472,9 @@ class JavaPanZoomController
         return true;
     }
 
+
+
+
     private void cancelTouch() {
         GeckoEvent e = GeckoEvent.createBroadcastEvent("Gesture:CancelTouch", "");
         GeckoAppShell.sendEventToGecko(e);
@@ -1466,4 +1553,106 @@ class JavaPanZoomController
     public void setOverscrollHandler(final Overscroll handler) {
         mOverscroll = handler;
     }
+
+    // checks if a two finger swipe movement can be recognized as a fling instead of a pan movement...
+    private boolean handleTwofFingerFling() {
+        /*
+        * Condition for a movment to be recognised as a two finger swipe
+        * Distance between p1 and p2 should remain KINDA the same at start and end possition
+        * The movment in X direction has to be larger than a 1/3 of the screen width
+        * The movment in Y direction should be less then LIMIT. 
+        * The swipe has to go from left to right
+        */
+        float startDistance = calculateDistance(startPointerOneX,startPointerOneY,startPointerTwoX,startPointerTwoY);
+        float endDistance = calculateDistance(endPointerOneX,endPointerOneY,endPointerTwoX,endPointerTwoY);
+        if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
+            (endPointerOneX - startPointerOneX) > - screenWidth * FLING_DISTANCE &&
+                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
+                
+            Log.w("myApp", "*** two finger forward \n");
+            // Tests if it is possible to do forward
+            if(Tabs.getInstance().getSelectedTab().canDoForward()){  
+                // Does the forward  
+                Tabs.getInstance().getSelectedTab().doForward(); 
+                // Draws the arrownsla
+                mSwipeIndicatorForward = GeckoApp.getSwipeIndicatorForward();
+                mSwipeIndicatorForward.setVisibility(View.VISIBLE);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run(){
+                        mSwipeIndicatorForward.setVisibility(View.GONE);    
+                    }
+                }, 1000);
+
+            }
+            return true;
+        }
+        else if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
+            (endPointerOneX - startPointerOneX) < - screenWidth * FLING_DISTANCE &&
+                Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
+
+            Log.w("myApp", "*** two finger backwards \n");
+            if(Tabs.getInstance().getSelectedTab().canDoBack()){ 
+                Tabs.getInstance().getSelectedTab().doBack();
+                mSwipeIndicatorBack = GeckoApp.getSwipeIndicatorBack();
+                mSwipeIndicatorBack.setVisibility(View.VISIBLE);
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run(){
+                        mSwipeIndicatorBack.setVisibility(View.GONE);    
+                    }
+                }, 1000);
+
+              
+        }
+            return true;
+        }
+        newMultiFingerEvent = true;
+        return false;
+    }
+
+    /*calculates the distance between two pointers given as x and y coordinates*/
+    private float calculateDistance(float pOneX,float pOneY,float pTwoX,float pTwoY){
+        return FloatMath.sqrt((pOneX - pTwoX)*(pOneX - pTwoX)+(pOneY - pTwoY)*(pOneY - pTwoY)); 
+    }
+
+    /* This method handels the tab switching functionalities when swiping with three fingers*/
+    private boolean handelThreeFingerFling(MotionEvent endEvent){
+        /* Assume if you swipe three fingers more then FLING_DISTANCE * screenWidth, it's a valid threefinger swipe
+        *  Swiping from left to right shall cause the previous tab to open.
+        *  Swiping from right to left shall cause the next tab to open.
+        */
+
+        if (endEvent.getX(0) - startPointerOneX > screenWidth * FLING_DISTANCE){
+            if (Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
+            Log.w("myApp", "***Three fingers left to right \n " + Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle());
+            Tabs.getInstance().selectTab(Tabs.getInstance().getPreviousSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
+            }
+            else{
+                Log.w("myApp", "No other pages to swith to-- inGetPriviousTab \n ");     
+            }
+
+
+
+ 
+        }
+        else if(endEvent.getX(0) - startPointerOneX  > - screenWidth * FLING_DISTANCE){
+            if (Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()) != null){
+                Log.w("myApp", "***Three fingers right to left \n " + Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getTitle()); 
+                 Tabs.getInstance().selectTab(Tabs.getInstance().getNextSwipeTab(Tabs.getInstance().getSelectedTab()).getId()); 
+            }
+            else{
+                Log.w("myApp", "No other pages to swith to-- inGetNext \n ");
+            }
+
+        }
+
+
+
+        newMultiFingerEvent = false;
+        return false;
+    }
+
+
 }

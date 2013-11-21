@@ -247,9 +247,12 @@ public class Tabs implements GeckoEventListener {
 
     private Tab getPreviousTabFrom(Tab tab, boolean getPrivate) {
         int index = getIndexOf(tab);
+        Log.w("myApp", "\n index: " + index);
+
         for (int i = index - 1; i >= 0; i--) {
             Tab prev = mOrder.get(i);
             if (prev.isPrivate() == getPrivate) {
+                Log.w("myApp", "\n index i:  " + i);
                 return prev;
             }
         }
@@ -742,4 +745,77 @@ public class Tabs implements GeckoEventListener {
     public static int getNextTabId() {
         return sTabId.getAndIncrement();
     }
+    
+    /*
+    * Returns the previous tab. If there is no previous tab it returns the last tab
+    * of the list. If no other tabs at all then returns NULL. 
+    */
+    public Tab getPreviousSwipeTab(Tab tab) {
+    Tab selectedTab = getSelectedTab();
+    if (selectedTab != tab)
+        return selectedTab;
+
+    boolean getPrivate = tab.isPrivate();
+    Tab nextTab = getPreviousTabFrom(tab, getPrivate);
+    // if there is no previous tab take the last tab in the list (roundabout)
+    if (nextTab == null)
+        nextTab = mOrder.get(mOrder.size() - 1);
+    if (nextTab == null && getPrivate) {
+        // If there are no private tabs remaining, get the last normal tab
+        Tab lastTab = mOrder.get(0);
+        if (!lastTab.isPrivate()) {
+            nextTab = lastTab;
+        } else {
+            nextTab = getNextTabFrom(lastTab, false);
+        }
+    }
+    Tab parent = getTab(tab.getParentId());
+    if (parent != null) {
+        // If the next tab is a sibling, switch to it. Otherwise go back to the parent.
+        if (nextTab != null && nextTab.getParentId() == tab.getParentId())
+            return nextTab;
+        else
+            return parent;
+    }
+    return nextTab;
+    }
+
+
+    /*
+    * Returns the next tab. If there is no next tab then it returns the first tab of the list.
+    * If there is no other tabs then it returns NULL.
+    */
+    public Tab getNextSwipeTab(Tab tab) {
+        Tab selectedTab = getSelectedTab();
+        if (selectedTab != tab)
+            return selectedTab;
+
+        boolean getPrivate = tab.isPrivate();
+        Tab nextTab = getNextTabFrom(tab, getPrivate);
+        if (nextTab == null)
+            nextTab = mOrder.get(0);
+        if (nextTab == null && getPrivate) {
+            // If there are no private tabs remaining, get the last normal tab
+            Tab lastTab = mOrder.get(mOrder.size() - 1);
+            if (!lastTab.isPrivate()) {
+                nextTab = lastTab;
+            } else {
+                nextTab = getPreviousTabFrom(lastTab, false);
+            }
+        }
+
+        Tab parent = getTab(tab.getParentId());
+        if (parent != null) {
+            // If the next tab is a sibling, switch to it. Otherwise go back to the parent.
+            if (nextTab != null && nextTab.getParentId() == tab.getParentId())
+                return nextTab;
+            else
+                return parent;
+        }
+        return nextTab;
+    }
+
+
+
+
 }

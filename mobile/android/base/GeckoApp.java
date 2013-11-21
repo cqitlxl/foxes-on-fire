@@ -96,6 +96,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -210,6 +211,10 @@ abstract public class GeckoApp
 
     private static final String RESTARTER_ACTION = "org.mozilla.gecko.restart";
     private static final String RESTARTER_CLASS = "org.mozilla.gecko.Restarter";
+
+    
+    private static ImageView mSwipeIndicatorBack;
+    private static ImageView mSwipeIndicatorForward;
 
     @SuppressWarnings("serial")
     class SessionRestoreException extends Exception {
@@ -1242,6 +1247,9 @@ abstract public class GeckoApp
         // Set up Gecko layout.
         mGeckoLayout = (RelativeLayout) findViewById(R.id.gecko_layout);
         mMainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        mSwipeIndicatorBack = (ImageView) findViewById(R.id.swipe_indicator_back);
+        mSwipeIndicatorForward = (ImageView) findViewById(R.id.swipe_indicator_forward);
+    
 
         // Set up tabs panel.
         mTabsPanel = (TabsPanel) findViewById(R.id.tabs_panel);
@@ -2709,4 +2717,19 @@ abstract public class GeckoApp
         }
         return versionCode;
     }
+
+
+    public static ImageView getSwipeIndicatorBack(){
+ 
+        return mSwipeIndicatorBack;
+    }
+
+    public static ImageView getSwipeIndicatorForward(){
+ 
+        return mSwipeIndicatorForward;
+    }
+
+
+
+
 }
