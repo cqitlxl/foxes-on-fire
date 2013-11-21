@@ -388,7 +388,13 @@
          <item name="android:layout_height">@dimen/browser_toolbar_height</item>
          <item name="android:layout_weight">0.0</item>
     </style>
-
+    <!-- URL bar - Reload Icon -->
+    <style name="UrlBar.ImageButton.ReloadIcon">
+         <item name="android:scaleType">centerCrop</item>
+         <item name="android:layout_width">48dp</item>
+         <item name="android:layout_height">48dp</item>
+         <item name="android:layout_weight">0.0</item>
+    </style>
     <!-- TabsTray List -->
     <style name="TabsListBase">
          <item name="android:background">@android:color/transparent</item>

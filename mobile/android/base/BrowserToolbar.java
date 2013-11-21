@@ -133,6 +133,8 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public ImageButton mStop;
     public ImageButton mSiteSecurity;
     public ImageButton mGo;
+    public ImageButton mReload;
+
     public PageActionLayout mPageActionLayout;
     private Animation mProgressSpinner;
     private TabCounter mTabsCounter;
@@ -543,6 +545,17 @@ public class BrowserToolbar extends GeckoRelativeLayout
             }
         });
 
+        mReload = (ImageButton) findViewById(R.id.reload);
+        mReload.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Tab tab = Tabs.getInstance().getSelectedTab();
+                if (tab != null)
+                    tab.doReload();
+                setProgressVisibility(true);
+            }
+        });
+
         mGo = (ImageButton) findViewById(R.id.go);
         mGo.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -552,6 +565,7 @@ public class BrowserToolbar extends GeckoRelativeLayout
                 }
             }
         });
+
 
         float slideWidth = getResources().getDimension(R.dimen.browser_toolbar_lock_width);
 
@@ -968,6 +982,7 @@ public class BrowserToolbar extends GeckoRelativeLayout
     public void setPageActionVisibility(boolean isLoading) {
         // Handle the loading mode page actions
         mStop.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        mReload.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 
         // Handle the viewing mode page actions
         setSiteSecurityVisibility(mShowSiteSecurity && !isLoading);
