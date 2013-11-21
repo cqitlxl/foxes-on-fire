@@ -499,17 +499,21 @@ public class TabsTray extends TwoWayView
                 case MotionEvent.ACTION_UP: {
                     if (mSwipeView == null)
                         break;
-                    if (mContextMenuOpened == true){
+                    // This would cause the tab to, among other things,
+                    // get stuck somewhere while swiped.
+                   /* if (mContextMenuOpened == true){
                         mContextMenuOpened = false;
                         break;
-                    }
+                    } */
 
                     cancelCheckForTap();
                     mSwipeView.setPressed(false);
                    
                     mLongPressStart = 0;
                     
-                    if (!mSwiping) {
+                    // If not swiping and if the contextMenu is not open,
+                    // ie just a normal press, the panel can be hidden.
+                    if (!mSwiping && !mContextMenuOpened) {
                         TabRow tab = (TabRow) mSwipeView.getTag();
                         Tabs.getInstance().selectTab(tab.id);
                         autoHidePanel();
@@ -566,6 +570,7 @@ public class TabsTray extends TwoWayView
                     mSwipeStartX = 0;
                     mSwipeStartY = 0;
                     mSwiping = false;
+                    mContextMenuOpened = false;
 
                     break;
                 }
