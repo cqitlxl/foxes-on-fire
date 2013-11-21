@@ -1570,17 +1570,21 @@ class JavaPanZoomController
                 Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
                 
             Log.w("myApp", "*** two finger forward \n");
-            mSwipeIndicatorForward = GeckoApp.getSwipeIndicatorForward();
-            mSwipeIndicatorForward.setVisibility(View.VISIBLE);
+            // Tests if it is possible to do forward
+            if(Tabs.getInstance().getSelectedTab().canDoForward()){  
+                // Does the forward  
+                Tabs.getInstance().getSelectedTab().doForward(); 
+                // Draws the arrownsla
+                mSwipeIndicatorForward = GeckoApp.getSwipeIndicatorForward();
+                mSwipeIndicatorForward.setVisibility(View.VISIBLE);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run(){
+                        mSwipeIndicatorForward.setVisibility(View.GONE);    
+                    }
+                }, 1000);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run(){
-                    mSwipeIndicatorForward.setVisibility(View.GONE);    
-                }
-            }, 1000);
-
-            Tabs.getInstance().getSelectedTab().doForward();
+            }
             return true;
         }
         else if (Math.abs(startDistance - endDistance) < FLING_DEVIATION &&
@@ -1588,17 +1592,20 @@ class JavaPanZoomController
                 Math.abs(endPointerOneY - startPointerOneY) < MAX_Y_MOVEMENT){
 
             Log.w("myApp", "*** two finger backwards \n");
-            mSwipeIndicatorBack = GeckoApp.getSwipeIndicatorBack();
-            mSwipeIndicatorBack.setVisibility(View.VISIBLE);
+            if(Tabs.getInstance().getSelectedTab().canDoBack()){ 
+                Tabs.getInstance().getSelectedTab().doBack();
+                mSwipeIndicatorBack = GeckoApp.getSwipeIndicatorBack();
+                mSwipeIndicatorBack.setVisibility(View.VISIBLE);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run(){
-                    mSwipeIndicatorBack.setVisibility(View.GONE);    
-                }
-            }, 1000);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run(){
+                        mSwipeIndicatorBack.setVisibility(View.GONE);    
+                    }
+                }, 1000);
 
-            Tabs.getInstance().getSelectedTab().doBack();
+              
+        }
             return true;
         }
         newMultiFingerEvent = true;
