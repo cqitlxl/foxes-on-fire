@@ -423,7 +423,7 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
 
         // TextView text = (TextView) v.findViewById(R.id.btitle); 
         // CharSequence itemTitle = text.getText(); 
-        CharSequence itemTitle = "Hallo - Das ist eine Ueberschrift"; 
+        CharSequence itemTitle = "Tab Context Menu"; 
         menu.setHeaderTitle(itemTitle);
 
         MenuInflater inflater = new MenuInflater(this.getContext());
