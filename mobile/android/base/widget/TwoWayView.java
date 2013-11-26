@@ -22,6 +22,8 @@
 package org.mozilla.gecko.widget;
 
 import org.mozilla.gecko.R;
+import org.mozilla.gecko.TabsTray;
+import org.mozilla.gecko.widget.TabRow;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -51,6 +53,7 @@ import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.FocusFinder;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -68,6 +71,7 @@ import android.widget.AdapterView;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,6 +248,8 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
 
     private int mLastAccessibilityScrollEventFromIndex;
     private int mLastAccessibilityScrollEventToIndex;
+
+    private View mContextCaller;
 
     public interface OnScrollListener {
 
@@ -423,11 +429,77 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
 
         // TextView text = (TextView) v.findViewById(R.id.btitle); 
         // CharSequence itemTitle = text.getText(); 
-        CharSequence itemTitle = "Tab Context Menu"; 
+        CharSequence itemTitle = ((TextView)((TabRow)mContextCaller).getChildAt(1)).getText(); 
         menu.setHeaderTitle(itemTitle);
 
         MenuInflater inflater = new MenuInflater(this.getContext());
         inflater.inflate(R.menu.tabstray_contextmenu, menu);
+
+            // better do it like that but I was to lazy...:
+            //int count = ((TabRow)mContextCaller).getChildCount();
+            //for (int i=0; i < count; i++) {
+            //    final View child = ((TabRow)mContextCaller).getChildAt(i);
+            //    Log.w("myApp"," TESTI --> " + child + "\n");
+            //}
+
+        //Log.w("myApp","TEST --> " + ((TextView)((TabRow)mContextCaller).getChildAt(1)).getText() + "\n");
+        Log.w("myApp","in Create COntext MENU " + menu.getItem(0) + "\n");
+
+        // Open Tab
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK OPEN \n");
+                ((TabsTray) mContextCaller.getParent()).openMyTab(mContextCaller);
+
+                return true;
+            }
+        });
+
+        // Clone Tab
+        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK CLONE \n");
+                return true;
+            }
+        });
+
+        // Close Tab
+        menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK CLOSE \n");
+                return true;
+            }
+        });
+
+        // Share Tab
+        menu.getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK SHARE \n");
+                return true;
+            }
+        });
+
+        // Download Tab
+        menu.getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK DOWNLOAD \n");
+                return true;
+            }
+        });
+
+        // Bookmark Tab
+        menu.getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick (MenuItem item){
+                Log.w("myApp","ONCLICK BOOKMARK \n");
+                return true;
+            }
+        });
 
         return;
     }
@@ -1269,7 +1341,9 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
                         getChildAt(longPressPosition - mFirstPosition),
                         longPressPosition, longPressId);
 
-                //Log.w("myApp", "SHOWCONTEXTMENUFORCHILD: " + getChildAt(longPressPosition - mFirstPosition) + "\n");
+                Log.w("myApp", "SHOWCONTEXTMENUFORCHILD: " + getChildAt(longPressPosition - mFirstPosition) + "\n");
+                //Log.w("myApp", "ORIGINAL VIEW: " + originalView + "\n");
+                mContextCaller = getChildAt(longPressPosition - mFirstPosition); // save last context menu caller
 
                 handled = super.showContextMenuForChild(originalView);
             }

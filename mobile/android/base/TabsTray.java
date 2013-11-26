@@ -120,6 +120,14 @@ public class TabsTray extends TwoWayView
         mTabsPanel.autoHidePanel();
     }
 
+    public boolean openMyTab(View view){
+        TabRow tab = (TabRow) view.getTag(); // tabRow replaces mSwipeView
+        Tabs.getInstance().selectTab(tab.id);
+        autoHidePanel();
+
+        return true;
+    }
+
     // ViewHolder for a row in the list
     private class TabRow {
         int id;
