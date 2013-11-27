@@ -3,6 +3,17 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="wrap_content"/>
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<ImageView android:id="@+id/menu_reading_list_item_thumbnail"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+	<TextView android:id="@+id/menu_reading_list_item_title"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+</LinearLayout>
