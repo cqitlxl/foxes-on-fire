@@ -121,12 +121,6 @@ public class MenuReadingList extends Fragment {
             }
             byte[] thumbnailByteArray = BrowserDB.getThumbnailForUrl(context.getContentResolver(), url);
             thumbnail.setImageBitmap(BitmapUtils.decodeByteArray(thumbnailByteArray));
-            TextView titleRow = (TextView) view.findViewById(R.id.menu_reading_list_item_title);
-            String title = "No title";
-            if(cursor != null){
-                title = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.TITLE));
-            }
-            titleRow.setText(title);
         }
 
         @Override
