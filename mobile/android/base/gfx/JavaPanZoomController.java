@@ -17,7 +17,9 @@ import org.mozilla.gecko.util.FloatUtils;
 import org.mozilla.gecko.util.GamepadUtils;
 import org.mozilla.gecko.util.GeckoEventListener;
 import org.mozilla.gecko.util.ThreadUtils;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.json.JSONObject;
 import java.lang.Math;
 import android.content.res.Resources;
@@ -155,9 +157,19 @@ class JavaPanZoomController
     private float endPointerOneY;
     private float endPointerTwoX;
     private float endPointerTwoY;
+    private float endPointerThreeX;
+    private float endPointerThreeY;
+    private float endPointerFourX;
+    private float endPointerFourY;
+    private float endPointerFiveX;
+    private float endPointerFiveY;
         /* Variables for keeping track of the maximum number of fingers used*/
     private boolean twoFingers;
     private boolean threeFingers;
+    private boolean fiveFingers;
+    private List<Float> downListX = new ArrayList<Float>();
+    private List<Float> upListX = new ArrayList<Float>();
+
     
     private int screenWidth;
 
@@ -172,6 +184,7 @@ class JavaPanZoomController
         newMultiFingerEvent = true;
         twoFingers = false;
         threeFingers  = false;
+        fiveFingers = false;
 
         screenWidth = view.getWidth();
 
@@ -373,14 +386,21 @@ class JavaPanZoomController
     public boolean onTouchEvent(MotionEvent event) {
         //Log.w("myApp", "onTOUCHEvent: fingers: " + event.getPointerCount() + "\n");
         //Log.w("myApp", "Event finger down :" + event.getPointerCount() + "\n");
-        if ((event.getPointerCount() == 2 || event.getPointerCount() == 3) && newMultiFingerEvent ){
+        if ((event.getPointerCount() == 2 || event.getPointerCount() == 3 ) && newMultiFingerEvent ){
+
 
                 startPointerOneX = event.getX(0);
                 startPointerOneY = event.getY(0);
                 startPointerTwoX = event.getX(1);
                 startPointerTwoY = event.getY(1);
-                newMultiFingerEvent = false;
+                 newMultiFingerEvent = false;
+        }         
+
+        if (event.getPointerCount() == 5 && !fiveFingers){
+                    
+                   downListX = setFiveFingers(event);
         }
+        
         
         if (event.getPointerCount() == 2) {
             twoFingers = true;
@@ -393,6 +413,15 @@ class JavaPanZoomController
             threeFingers = true;
             twoFingers = false;
             //Log.w("myApp", " Henrik has at least three fingers! \n");
+        }
+        else if (event.getPointerCount() == 5){
+            upListX = setFiveFingers(event);
+            threeFingers = false;
+            twoFingers = false;
+            fiveFingers = true;
+           
+
+
         }
         return mTouchEventHandler.handleEvent(event);
     }
@@ -575,7 +604,11 @@ class JavaPanZoomController
     }
 
     private boolean handleTouchEnd(MotionEvent event) {
-        if (threeFingers){
+        if (fiveFingers){
+            handelFiveFingerScrunch();
+
+        }
+        else if (threeFingers){
             handelThreeFingerFling(event);
         }
         else if (twoFingers){
@@ -590,6 +623,7 @@ class JavaPanZoomController
         }
         twoFingers = false;
         threeFingers = false;
+        fiveFingers = false;
 
 
         switch (mState) {
@@ -1647,12 +1681,44 @@ class JavaPanZoomController
             }
 
         }
-
-
-
         newMultiFingerEvent = false;
         return false;
     }
+
+
+    private boolean handelFiveFingerScrunch(){
+        if (downListX.get(0) < upListX.get(0) && downListX.get(1) < upListX.get(1) && downListX.get(3) > upListX.get(3) && downListX.get(4) > upListX.get(4)){
+            Tabs.getInstance().closeTab(Tabs.getInstance().getSelectedTab());
+        }
+        
+        newMultiFingerEvent = false;
+        return false;
+
+    }
+    // returns sorted list
+    private List<Float> setFiveFingers(MotionEvent event){
+
+        
+        List<Float> list = new ArrayList<Float>();
+
+        list.add(event.getX(0));
+        list.add(event.getX(1));
+        list.add(event.getX(2));
+        list.add(event.getX(3));
+        list.add(event.getX(4));
+        Collections.sort(list);
+
+        return list;
+
+
+
+        
+
+    }
+
+
+
+
 
 
 }
