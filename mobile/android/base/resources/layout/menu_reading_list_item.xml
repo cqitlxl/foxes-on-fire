@@ -11,6 +11,7 @@
 	<ImageView android:id="@+id/menu_reading_list_item_thumbnail"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true"
+        android:padding="2dip"/>
 
 </LinearLayout>
