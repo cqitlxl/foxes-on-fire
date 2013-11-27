@@ -409,6 +409,7 @@ abstract public class BrowserApp extends GeckoApp
             @Override
             public void run() {
                 BrowserDB.addReadingListItem(getContentResolver(), title, url);
+                BrowserDB.updateThumbnailForUrl(getContentResolver(), url, Tabs.getInstance().getSelectedTab().getThumbnail());
                 showToast(R.string.reading_list_added, Toast.LENGTH_SHORT);
 
                 final int count = BrowserDB.getReadingListCount(getContentResolver());
