@@ -114,19 +114,19 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor){
-            ImageView row = (ImageView) view.findViewById(R.id.menu_reading_list_item_thumbnail);
+            ImageView thumbnail = (ImageView) view.findViewById(R.id.menu_reading_list_item_thumbnail);
             String url = "";
             if(cursor != null) {
                 url = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.URL));
             }
             byte[] thumbnailByteArray = BrowserDB.getThumbnailForUrl(context.getContentResolver(), url);
-            row.setImageBitmap(BitmapUtils.decodeByteArray(thumbnailByteArray));
-            /*TextView row = (TextView) view.findViewById(R.id.menu_reading_list_item_title);
+            thumbnail.setImageBitmap(BitmapUtils.decodeByteArray(thumbnailByteArray));
+            TextView titleRow = (TextView) view.findViewById(R.id.menu_reading_list_item_title);
             String title = "No title";
             if(cursor != null){
                 title = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.TITLE));
             }
-            row.setText(title);*/
+            titleRow.setText(title);
         }
 
         @Override
