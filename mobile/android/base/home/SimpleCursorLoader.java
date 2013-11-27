@@ -28,7 +28,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
+public abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
     final ForceLoadContentObserver mObserver;
     Cursor mCursor;
 
@@ -41,7 +41,7 @@ abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
      * Loads the target cursor for this loader. This method is called
      * on a worker thread.
      */
-    protected abstract Cursor loadCursor();
+    public abstract Cursor loadCursor();
 
     /* Runs on a worker thread */
     @Override
@@ -89,7 +89,7 @@ abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
      * Must be called from the UI thread
      */
     @Override
-    protected void onStartLoading() {
+    public void onStartLoading() {
         if (mCursor != null) {
             deliverResult(mCursor);
         }
@@ -103,7 +103,7 @@ abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
      * Must be called from the UI thread
      */
     @Override
-    protected void onStopLoading() {
+    public void onStopLoading() {
         // Attempt to cancel the current load task if possible.
         cancelLoad();
     }
@@ -116,7 +116,7 @@ abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
     }
 
     @Override
-    protected void onReset() {
+    public void onReset() {
         super.onReset();
 
         // Ensure the loader is stopped
