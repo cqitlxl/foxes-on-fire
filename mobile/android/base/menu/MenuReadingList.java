@@ -4,6 +4,7 @@ import android.widget.LinearLayout;
 import org.mozilla.gecko.R;
 import org.mozilla.gecko.db.BrowserContract.Bookmarks;
 import org.mozilla.gecko.db.BrowserDB;
+import org.mozilla.gecko.gfx.BitmapUtils;
 import org.mozilla.gecko.home.SimpleCursorLoader;
 import org.mozilla.gecko.db.BrowserDB.URLColumns;
 import org.mozilla.gecko.Tabs;
@@ -15,8 +16,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.util.Log;
 import android.support.v4.app.Fragment;
-import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.database.Cursor;
 import android.content.Context;
 import android.widget.TextView;
@@ -112,12 +114,19 @@ public class MenuReadingList extends Fragment {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor){
-            TextView row = (TextView) view;
+            ImageView row = (ImageView) view.findViewById(R.id.menu_reading_list_item_thumbnail);
+            String url = "";
+            if(cursor != null) {
+                url = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.URL));
+            }
+            byte[] thumbnailByteArray = BrowserDB.getThumbnailForUrl(context.getContentResolver(), url);
+            row.setImageBitmap(BitmapUtils.decodeByteArray(thumbnailByteArray));
+            /*TextView row = (TextView) view.findViewById(R.id.menu_reading_list_item_title);
             String title = "No title";
             if(cursor != null){
                 title = cursor.getString(cursor.getColumnIndexOrThrow(URLColumns.TITLE));
             }
-            row.setText(title);
+            row.setText(title);*/
         }
 
         @Override
