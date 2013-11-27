@@ -120,11 +120,19 @@ public class TabsTray extends TwoWayView
         mTabsPanel.autoHidePanel();
     }
 
+    /* Called in order to open a tab from the contextMenu */
     public boolean openMyTab(View view){
         TabRow tab = (TabRow) view.getTag(); // tabRow replaces mSwipeView
         Tabs.getInstance().selectTab(tab.id);
         autoHidePanel();
 
+        return true;
+    }
+
+    /* Called in order to close a tab from the contextMenu */
+    public boolean closeMyTab(View view) {
+        TabRow tab = (TabRow) view.getTag(); // tabRow replaced mSwipeView
+        Tabs.getInstance().closeTab(Tabs.getInstance().getTab(tab.id));
         return true;
     }
 

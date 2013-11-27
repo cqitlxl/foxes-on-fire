@@ -1,6 +1,5 @@
-/*
+ /*
  * Copyright (C) 2013 Lucas Rocha
- *
  * This code is based on bits and pieces of Android's AbsListView,
  * Listview, and StaggeredGridView.
  *
@@ -421,7 +420,7 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
         updateScrollbarsDirection();
     }
 
-    /*dasdasdasd*/
+    /* Create a context menu */
     @Override 
     public void onCreateContextMenu(ContextMenu menu) {
         //Log.w("myApp","in Create COntext menu");
@@ -429,7 +428,7 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
 
         // TextView text = (TextView) v.findViewById(R.id.btitle); 
         // CharSequence itemTitle = text.getText(); 
-        CharSequence itemTitle = ((TextView)((TabRow)mContextCaller).getChildAt(1)).getText(); 
+        CharSequence itemTitle = ((TextView)((TabRow)mContextCaller).getChildAt(1)).getText();
         menu.setHeaderTitle(itemTitle);
 
         MenuInflater inflater = new MenuInflater(this.getContext());
@@ -449,7 +448,6 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
         menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK OPEN \n");
                 ((TabsTray) mContextCaller.getParent()).openMyTab(mContextCaller);
 
                 return true;
@@ -469,7 +467,8 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
         menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK CLOSE \n");
+                ((TabsTray) mContextCaller.getParent()).closeMyTab(mContextCaller);
+
                 return true;
             }
         });
