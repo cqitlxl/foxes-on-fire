@@ -454,48 +454,12 @@ public class TwoWayView extends AdapterView<ListAdapter> implements
             }
         });
 
-        // Clone Tab
-        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
-            @Override
-            public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK CLONE \n");
-                return true;
-            }
-        });
-
         // Close Tab
-        menu.getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
+        menu.getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick (MenuItem item){
                 ((TabsTray) mContextCaller.getParent()).closeMyTab(mContextCaller);
 
-                return true;
-            }
-        });
-
-        // Share Tab
-        menu.getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
-            @Override
-            public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK SHARE \n");
-                return true;
-            }
-        });
-
-        // Download Tab
-        menu.getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
-            @Override
-            public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK DOWNLOAD \n");
-                return true;
-            }
-        });
-
-        // Bookmark Tab
-        menu.getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener(){
-            @Override
-            public boolean onMenuItemClick (MenuItem item){
-                Log.w("myApp","ONCLICK BOOKMARK \n");
                 return true;
             }
         });

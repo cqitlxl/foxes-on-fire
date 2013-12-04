@@ -8,19 +8,7 @@
     <item android:id="@+id/tabstray_open"
           android:title="Open Tab"/>
 
-    <item android:id="@+id/tabstray_clone"
-          android:title="Clone Tab"/>
-
     <item android:id="@+id/tabstray_close"
           android:title="Close Tab"/>
-
-    <item android:id="@+id/tabstray_share"
-          android:title="Share Tab"/>
-
-    <item android:id="@+id/tabstray_download"
-          android:title="Download Tab"/>
-
-    <item android:id="@+id/tabstray_bookmark"
-          android:title="Bookmark Tab"/>
 
 </menu>
